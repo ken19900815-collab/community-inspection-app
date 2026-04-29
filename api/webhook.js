@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const LIFF_URL = "https://liff.line.me/2009930434-HhDufQN2";
+  const LIFF_URL = "https://liff.line.me/2009930434-iD9N0AwB";
   const TOKEN = process.env.CHANNEL_ACCESS_TOKEN;
 
   if (req.method === "GET") {
