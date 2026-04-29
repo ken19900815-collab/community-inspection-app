@@ -203,5 +203,19 @@ function exportCSV(){
 function clearAll(){ if(confirm("確定清空本機所有巡檢紀錄？")){ records={}; save(); goHome(); } }
 refreshStats();
 </script>
-</body>
+<hr>
+
+<button onclick="submitInspection()" style="
+  padding:12px;
+  width:100%;
+  background:red;
+  color:white;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+">
+送出巡檢
+</button>
+
+<p id="result" style="color:green;"></p></body>
 </html>
