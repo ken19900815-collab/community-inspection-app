@@ -1,114 +1,64 @@
-[
-  {
-    "id": "L01",
-    "name": "B1庫房",
-    "sort": 1,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L02",
-    "name": "B2庫房",
-    "sort": 2,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L03",
-    "name": "B3庫房",
-    "sort": 3,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L04",
-    "name": "B4庫房",
-    "sort": 4,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L05",
-    "name": "A棟一樓安全梯",
-    "sort": 5,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L06",
-    "name": "泳池",
-    "sort": 6,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L07",
-    "name": "2樓家教室",
-    "sort": 7,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L08",
-    "name": "2樓桌球室",
-    "sort": 8,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L09",
-    "name": "2樓健身房",
-    "sort": 9,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L10",
-    "name": "2樓休息室",
-    "sort": 10,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L11",
-    "name": "14樓中繼水塔",
-    "sort": 11,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L12",
-    "name": "26樓廚房",
-    "sort": 12,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L13",
-    "name": "頂樓水池",
-    "sort": 13,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L14",
-    "name": "B棟一樓安全梯",
-    "sort": 14,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L15",
-    "name": "B棟頂樓",
-    "sort": 15,
-    "enabled": true,
-    "note": ""
-  },
-  {
-    "id": "L16",
-    "name": "後哨",
-    "sort": 16,
-    "enabled": true,
-    "note": ""
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+const LIFF_URL = "https://liff.line.me/2009930434-HhDufQN2";
+
+app.get("/", (req, res) => {
+  res.send("LINE LIFF 巡檢 Bot is running");
+});
+
+app.post("/webhook", async (req, res) => {
+  const events = req.body.events || [];
+
+  for (const event of events) {
+    if (event.type === "message" && event.message.type === "text") {
+      const text = event.message.text.trim();
+
+      if (text.includes("開始巡檢") || text.includes("巡檢")) {
+        await replyMessage(event.replyToken);
+      }
+    }
   }
-]
+
+  res.sendStatus(200);
+});
+
+async function replyMessage(replyToken) {
+  const CHANNEL_ACCESS_TOKEN = process.env.CHANNEL_ACCESS_TOKEN;
+
+  await fetch("https://api.line.me/v2/bot/message/reply", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${CHANNEL_ACCESS_TOKEN}`,
+    },
+    body: JSON.stringify({
+      replyToken,
+      messages: [
+        {
+          type: "template",
+          altText: "開始巡檢",
+          template: {
+            type: "buttons",
+            title: "社區巡檢系統",
+            text: "請點選下方按鈕開始今日巡檢。",
+            actions: [
+              {
+                type: "uri",
+                label: "開始巡檢",
+                uri: LIFF_URL,
+              },
+            ],
+          },
+        },
+      ],
+    }),
+  });
+}
+
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
