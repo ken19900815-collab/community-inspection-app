@@ -1,1 +1,32 @@
-<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>社區巡檢管理系統</title><script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script><link rel="stylesheet" href="/style.css"></head><body><div id="app"><div class="loading">載入中...</div></div><script src="/app.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>巡檢系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="font-family: Arial; padding:20px;">
+
+  <h2>📋 巡檢系統</h2>
+
+  <label>選擇巡檢點：</label><br>
+  <select id="location"></select><br><br>
+
+  <label>檢查狀況：</label><br>
+  <select id="status">
+    <option value="正常">正常</option>
+    <option value="異常">異常</option>
+  </select><br><br>
+
+  <label>備註：</label><br>
+  <textarea id="note" placeholder="輸入異常內容"></textarea><br><br>
+
+  <button onclick="submitForm()">送出</button>
+
+  <p id="result"></p>
+
+  <script src="app.js"></script>
+
+</body>
+</html>
