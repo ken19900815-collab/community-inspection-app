@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0f2f57" />
-<title>社區走動式巡檢系統</title>
+<title>社區走動式巡檢系統｜LIFF鍵盤修正版</title>
 <style>
 :root{
   --navy:#0f2f57;--blue:#1769aa;--light:#f5f7fb;--line:#e5e7eb;
@@ -67,6 +67,13 @@ button{border:0;border-radius:14px;padding:12px 14px;font-weight:800;font-size:1
 .submit-inner{max-width:900px;margin:0 auto;display:flex;gap:8px;align-items:center}
 .submit-inner .txt{flex:1;font-size:12px;color:#475569;font-weight:700}
 .submit-inner button{min-width:145px}
+
+/* LINE LIFF / mobile keyboard fix */
+body.keyboard-open{padding-bottom:18px;}
+body.keyboard-open .navbar,
+body.keyboard-open .submit-bar{display:none !important;}
+input, select, textarea, button{font-size:16px;}
+textarea:focus, input:focus, select:focus{outline:2px solid rgba(23,105,170,.25); border-color:#1769aa;}
 button:disabled{opacity:.55;cursor:not-allowed;background:#94a3b8!important;color:#fff!important}
 .err{color:var(--red);font-size:13px;font-weight:800;margin-top:8px}
 .success{color:var(--green);font-size:14px;font-weight:900}
@@ -177,7 +184,7 @@ function bindMeta(){
     const el=document.getElementById("meta_"+k);
     if(el){
       el.value=state.meta[k]||"";
-      el.oninput=()=>{state.meta[k]=el.value; saveState(); renderAll();};
+      el.oninput=()=>{state.meta[k]=el.value; saveState(); updateSubmitBar();};
     }
   });
 }
@@ -424,6 +431,27 @@ function newInspection(){
     state=defaultState(); saveState(); renderAll(); showPage("home");
   }
 }
+
+// LINE LIFF mobile keyboard helper: typing fields won't be covered by fixed bottom bars.
+function setupKeyboardFix(){
+  const focusable='input, textarea, select';
+  document.addEventListener('focusin', e=>{
+    if(e.target && e.target.matches(focusable)){
+      document.body.classList.add('keyboard-open');
+      setTimeout(()=>{
+        try{ e.target.scrollIntoView({behavior:'smooth', block:'center'}); }catch(err){}
+      }, 250);
+    }
+  });
+  document.addEventListener('focusout', e=>{
+    setTimeout(()=>{
+      if(!document.activeElement || !document.activeElement.matches(focusable)){
+        document.body.classList.remove('keyboard-open');
+      }
+    }, 250);
+  });
+}
+setupKeyboardFix();
 renderAll();
 </script>
 </body>
