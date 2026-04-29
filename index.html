@@ -1,32 +1,207 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>巡檢系統</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>社區巡檢管理系統</title>
+<style>
+:root {
+  --bg:#f4f6fb; --card:#ffffff; --ink:#162033; --muted:#6b7280; --blue:#1d4ed8;
+  --green:#16a34a; --orange:#f59e0b; --red:#dc2626; --line:#e5e7eb;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{position:sticky;top:0;z-index:10;background:#0f172a;color:white;padding:14px 16px;box-shadow:0 2px 10px rgba(0,0,0,.15)}
+h1{font-size:20px;margin:0} .sub{font-size:12px;opacity:.85;margin-top:4px}
+main{padding:14px;max-width:900px;margin:auto;padding-bottom:90px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:white;border-radius:16px;padding:14px;box-shadow:0 2px 10px rgba(15,23,42,.06)}
+.stat b{font-size:24px;display:block;margin-top:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 3px 12px rgba(15,23,42,.06)}
+.loc-card{cursor:pointer} .loc-card:active{transform:scale(.99)}
+.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.badge{font-size:12px;border-radius:999px;padding:4px 8px;background:#eef2ff;color:#1e40af}
+.badge.red{background:#fee2e2;color:#991b1b} .badge.green{background:#dcfce7;color:#166534} .badge.orange{background:#ffedd5;color:#9a3412}
+button{border:0;border-radius:14px;padding:12px 14px;background:var(--blue);color:white;font-size:16px;font-weight:700;cursor:pointer}
+button.secondary{background:#e5e7eb;color:#111827} button.danger{background:var(--red)} button.ok{background:var(--green)} button.warn{background:var(--orange);color:#111827}
+.btns{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.btns button{font-size:14px;padding:10px 6px;background:#f1f5f9;color:#334155;border:1px solid #dbe3ef}
+.btns button.active.ok{background:#dcfce7;border-color:var(--green);color:#166534}
+.btns button.active.warn{background:#ffedd5;border-color:var(--orange);color:#9a3412}
+.btns button.active.danger{background:#fee2e2;border-color:var(--red);color:#991b1b}
+.btns button.active.na{background:#e5e7eb;border-color:#6b7280;color:#111827}
+.item-title{font-weight:800;font-size:16px} .std{color:#475569;font-size:13px;line-height:1.5;margin-top:6px}
+.meta{font-size:12px;color:var(--muted);margin-top:3px}
+textarea,input,select{width:100%;border:1px solid #cbd5e1;border-radius:12px;padding:10px;font-size:15px;background:white}
+.hidden{display:none!important} .photo-preview{max-width:100%;border-radius:12px;margin-top:8px;border:1px solid #e5e7eb}
+.panel{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0} .panel button{font-size:14px;padding:10px 12px}
+.bottom{position:fixed;left:0;right:0;bottom:0;background:white;border-top:1px solid #e5e7eb;padding:10px 14px;display:flex;gap:8px;z-index:20}
+.bottom button{flex:1}
+.progress{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin-top:8px} .bar{height:100%;background:var(--green);width:0%}
+.item-card.abnormal{border-color:#fecaca;background:#fff7f7} .item-card.attention{border-color:#fed7aa;background:#fffaf0} .item-card.normal{border-color:#bbf7d0;background:#f7fff9}
+.small{font-size:12px;color:#64748b} .req{color:var(--red);font-weight:bold}
+@media(min-width:720px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
 </head>
+<body>
+<header>
+  <h1>社區巡檢管理系統</h1>
+  <div class="sub">手機巡檢／拍照紀錄／異常追蹤／本機儲存／CSV匯出</div>
+</header>
+<main>
+  <section id="home">
+    <div class="grid">
+      <div class="stat">巡檢點<b id="statLoc">0</b></div>
+      <div class="stat">總項目<b id="statItems">0</b></div>
+      <div class="stat">已填寫<b id="statDone">0</b></div>
+      <div class="stat">異常<b id="statBad">0</b></div>
+    </div>
+    <div class="card">
+      <label>巡檢人員</label>
+      <input id="inspector" placeholder="請輸入姓名">
+      <div style="height:8px"></div>
+      <label>班別</label>
+      <select id="shift"><option>早班</option><option>中班</option><option>晚班</option><option>機動</option></select>
+      <div style="height:8px"></div>
+      <label>天氣</label>
+      <input id="weather" placeholder="晴／雨／陰">
+    </div>
+    <h2>巡檢點</h2>
+    <div id="locations"></div>
+  </section>
 
-<body style="font-family: Arial; padding:20px;">
+  <section id="inspect" class="hidden">
+    <div class="panel">
+      <button class="secondary" onclick="goHome()">← 返回巡檢點</button>
+      <button onclick="markAllNormal()">本區全設正常</button>
+    </div>
+    <div class="card">
+      <div class="row"><h2 id="locTitle" style="margin:0"></h2><span class="badge" id="locProgress"></span></div>
+      <div class="progress"><div class="bar" id="locBar"></div></div>
+    </div>
+    <div id="items"></div>
+  </section>
 
-  <h2>📋 巡檢系統</h2>
+  <section id="abnormalPage" class="hidden">
+    <div class="panel"><button class="secondary" onclick="goHome()">← 返回首頁</button></div>
+    <h2>異常／待注意追蹤</h2>
+    <div id="abnormalList"></div>
+  </section>
+</main>
 
-  <label>選擇巡檢點：</label><br>
-  <select id="location"></select><br><br>
+<div class="bottom">
+  <button onclick="showAbnormal()">異常追蹤</button>
+  <button class="secondary" onclick="exportCSV()">匯出CSV</button>
+  <button class="danger" onclick="clearAll()">清空資料</button>
+</div>
 
-  <label>檢查狀況：</label><br>
-  <select id="status">
-    <option value="正常">正常</option>
-    <option value="異常">異常</option>
-  </select><br><br>
+<script>
+const CHECK_ITEMS = [{"id": "1", "seq": 1, "location": "B1庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"id": "2", "seq": 2, "location": "B1庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好無破損，閥門無鏽蝕"}, {"id": "3", "seq": 3, "location": "B1庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽物"}, {"id": "4", "seq": 4, "location": "B1庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬、紙屑，走道通暢"}, {"id": "5", "seq": 5, "location": "B1庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度不超過2.1m，通道寬度≥90cm"}, {"id": "6", "seq": 6, "location": "B1庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常亮燈，無破損燈管"}, {"id": "7", "seq": 7, "location": "B1庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"id": "8", "seq": 8, "location": "B1庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "電子鎖或傳統鎖功能正常，門縫密合"}, {"id": "9", "seq": 9, "location": "B1庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰，無死角"}, {"id": "10", "seq": 10, "location": "B2庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"id": "11", "seq": 11, "location": "B2庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好，閥門無鏽蝕"}, {"id": "12", "seq": 12, "location": "B2庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽"}, {"id": "13", "seq": 13, "location": "B2庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬，走道通暢"}, {"id": "14", "seq": 14, "location": "B2庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度≤2.1m，通道寬度≥90cm"}, {"id": "15", "seq": 15, "location": "B2庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無破損"}, {"id": "16", "seq": 16, "location": "B2庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"id": "17", "seq": 17, "location": "B2庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "功能正常，門縫密合"}, {"id": "18", "seq": 18, "location": "B2庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰"}, {"id": "19", "seq": 19, "location": "B3庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"id": "20", "seq": 20, "location": "B3庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好，閥門無鏽蝕"}, {"id": "21", "seq": 21, "location": "B3庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽"}, {"id": "22", "seq": 22, "location": "B3庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬，走道通暢"}, {"id": "23", "seq": 23, "location": "B3庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度≤2.1m，通道寬度≥90cm"}, {"id": "24", "seq": 24, "location": "B3庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無破損"}, {"id": "25", "seq": 25, "location": "B3庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"id": "26", "seq": 26, "location": "B3庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "功能正常，門縫密合"}, {"id": "27", "seq": 27, "location": "B3庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰"}, {"id": "28", "seq": 28, "location": "B4庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"id": "29", "seq": 29, "location": "B4庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好，閥門無鏽蝕"}, {"id": "30", "seq": 30, "location": "B4庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽"}, {"id": "31", "seq": 31, "location": "B4庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬，走道通暢"}, {"id": "32", "seq": 32, "location": "B4庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度≤2.1m，通道寬度≥90cm"}, {"id": "33", "seq": 33, "location": "B4庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無破損"}, {"id": "34", "seq": 34, "location": "B4庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"id": "35", "seq": 35, "location": "B4庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "功能正常，門縫密合"}, {"id": "36", "seq": 36, "location": "B4庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰"}, {"id": "37", "seq": 37, "location": "A棟一樓安全梯", "category": "消防安全", "item": "防火門自動關閉功能", "standard": "防火門無卡住，釋放後可自動關閉，門縫密合"}, {"id": "38", "seq": 38, "location": "A棟一樓安全梯", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期，壓力指針正常"}, {"id": "39", "seq": 39, "location": "A棟一樓安全梯", "category": "消防安全", "item": "緊急照明燈（常亮/感應）", "standard": "燈具亮燈正常，備用電源指示正常"}, {"id": "40", "seq": 40, "location": "A棟一樓安全梯", "category": "消防安全", "item": "消防廣播/警報系統", "standard": "揚聲器外觀完好，無破損"}, {"id": "41", "seq": 41, "location": "A棟一樓安全梯", "category": "逃生通道", "item": "梯間無堆放雜物", "standard": "樓梯間全段通暢，嚴禁放置任何物品"}, {"id": "42", "seq": 42, "location": "A棟一樓安全梯", "category": "逃生通道", "item": "逃生方向指示貼紙/標誌", "standard": "清晰可辨，無褪色或遮蔽"}, {"id": "43", "seq": 43, "location": "A棟一樓安全梯", "category": "環境衛生", "item": "牆面/地面清潔", "standard": "無污漬、塗鴉、積水"}, {"id": "44", "seq": 44, "location": "A棟一樓安全梯", "category": "設備設施", "item": "扶手穩固度", "standard": "扶手無鬆動、鏽蝕"}, {"id": "45", "seq": 45, "location": "泳池", "category": "水質安全", "item": "餘氯濃度（ppm）", "standard": "維持1.0–3.0 ppm（請記錄實測值）"}, {"id": "46", "seq": 46, "location": "泳池", "category": "水質安全", "item": "pH值", "standard": "維持7.2–7.8（請記錄實測值）"}, {"id": "47", "seq": 47, "location": "泳池", "category": "水質安全", "item": "水面目視清澈度", "standard": "水面無雜物、水體清澈見底"}, {"id": "48", "seq": 48, "location": "泳池", "category": "設備設施", "item": "循環過濾泵運轉", "standard": "泵體運轉正常，無異聲、漏水"}, {"id": "49", "seq": 49, "location": "泳池", "category": "設備設施", "item": "排水孔/防夾蓋板", "standard": "蓋板完好，無破裂、鬆脫（安全法規必查項）"}, {"id": "50", "seq": 50, "location": "泳池", "category": "設備設施", "item": "池邊防滑墊", "standard": "完好無捲起，固定確實"}, {"id": "51", "seq": 51, "location": "泳池", "category": "消防安全", "item": "救生設備（救生圈/竿）", "standard": "定位懸掛，數量齊全，無破損"}, {"id": "52", "seq": 52, "location": "泳池", "category": "衛生管理", "item": "男女更衣室/淋浴間清潔", "standard": "地板無積水，鏡面乾淨，無異味"}, {"id": "53", "seq": 53, "location": "泳池", "category": "衛生管理", "item": "泳池周邊清潔", "standard": "無垃圾、濕腳踏墊乾淨"}, {"id": "54", "seq": 54, "location": "泳池", "category": "保全管控", "item": "非營業時間進出管控", "standard": "圍欄/門鎖關閉，無閒雜人進入"}, {"id": "55", "seq": 55, "location": "2樓家教室", "category": "環境衛生", "item": "地板清潔度", "standard": "無灰塵、汙漬，課桌椅擺放整齊"}, {"id": "56", "seq": 56, "location": "2樓家教室", "category": "環境衛生", "item": "白板/黑板清潔", "standard": "板面乾淨，板擦歸位"}, {"id": "57", "seq": 57, "location": "2樓家教室", "category": "設備設施", "item": "冷氣運轉與濾網", "standard": "冷氣正常運轉，濾網無積塵（每月清潔）"}, {"id": "58", "seq": 58, "location": "2樓家教室", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無閃爍破損"}, {"id": "59", "seq": 59, "location": "2樓家教室", "category": "設備設施", "item": "電源插座/延長線", "standard": "無裸露線路，延長線不過載"}, {"id": "60", "seq": 60, "location": "2樓家教室", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"id": "61", "seq": 61, "location": "2樓家教室", "category": "消防安全", "item": "緊急出口通暢", "standard": "門口無阻礙，可直接推開"}, {"id": "62", "seq": 62, "location": "2樓家教室", "category": "保全管控", "item": "非使用時間門禁上鎖", "standard": "課後確認上鎖，無遺留人員"}, {"id": "63", "seq": 63, "location": "2樓桌球室", "category": "環境衛生", "item": "地板清潔度", "standard": "無灰塵、球具歸位"}, {"id": "64", "seq": 64, "location": "2樓桌球室", "category": "環境衛生", "item": "桌球桌面清潔", "standard": "球桌面板清潔，桌腳穩固"}, {"id": "65", "seq": 65, "location": "2樓桌球室", "category": "設備設施", "item": "冷氣運轉", "standard": "正常運轉，無異音"}, {"id": "66", "seq": 66, "location": "2樓桌球室", "category": "設備設施", "item": "照明燈具（桌球需高照度）", "standard": "燈具全數正常，無閃爍（建議≥500 lux）"}, {"id": "67", "seq": 67, "location": "2樓桌球室", "category": "設備設施", "item": "電源插座", "standard": "無裸露線路"}, {"id": "68", "seq": 68, "location": "2樓桌球室", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"id": "69", "seq": 69, "location": "2樓桌球室", "category": "消防安全", "item": "緊急出口通暢", "standard": "門口無阻礙"}, {"id": "70", "seq": 70, "location": "2樓桌球室", "category": "器材管理", "item": "球具（球網/球拍/球）", "standard": "球網高度正常，球拍無破損，備用球充足"}, {"id": "71", "seq": 71, "location": "2樓桌球室", "category": "保全管控", "item": "非使用時間門禁上鎖", "standard": "確認上鎖"}, {"id": "72", "seq": 72, "location": "2樓健身房", "category": "設備安全", "item": "跑步機/橢圓機運轉", "standard": "機台啟動正常，緊急停止繩/按鈕功能正常"}, {"id": "73", "seq": 73, "location": "2樓健身房", "category": "設備安全", "item": "重訓器材螺絲鬆緊", "standard": "重量機固定螺絲、安全插銷完好，無鬆脫"}, {"id": "74", "seq": 74, "location": "2樓健身房", "category": "設備安全", "item": "地墊/防滑墊完好", "standard": "無破裂、翹起"}, {"id": "75", "seq": 75, "location": "2樓健身房", "category": "設備安全", "item": "鏡面完好度", "standard": "無裂縫、鬆脫，固定確實"}, {"id": "76", "seq": 76, "location": "2樓健身房", "category": "環境衛生", "item": "地板清潔", "standard": "無汗漬、灰塵，器材擦拭乾淨"}, {"id": "77", "seq": 77, "location": "2樓健身房", "category": "設備設施", "item": "冷氣/通風換氣", "standard": "正常運轉，室內無悶熱異味"}, {"id": "78", "seq": 78, "location": "2樓健身房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常"}, {"id": "79", "seq": 79, "location": "2樓健身房", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"id": "80", "seq": 80, "location": "2樓健身房", "category": "消防安全", "item": "緊急出口通暢", "standard": "門口無阻礙"}, {"id": "81", "seq": 81, "location": "2樓健身房", "category": "衛生管理", "item": "毛巾/清潔噴瓶補充", "standard": "毛巾架補充足量，消毒噴瓶有藥水"}, {"id": "82", "seq": 82, "location": "2樓健身房", "category": "保全管控", "item": "非使用時間門禁", "standard": "確認上鎖，無遺留人員"}, {"id": "83", "seq": 83, "location": "2樓休息室", "category": "環境衛生", "item": "沙發/桌椅清潔", "standard": "無食物殘渣、污漬，擺放整齊"}, {"id": "84", "seq": 84, "location": "2樓休息室", "category": "環境衛生", "item": "茶水間清潔（飲水機/微波爐）", "standard": "飲水機出水口定期消毒，微波爐內部清潔"}, {"id": "85", "seq": 85, "location": "2樓休息室", "category": "設備設施", "item": "冷氣運轉", "standard": "正常運轉，無異音"}, {"id": "86", "seq": 86, "location": "2樓休息室", "category": "設備設施", "item": "照明燈具", "standard": "全數正常"}, {"id": "87", "seq": 87, "location": "2樓休息室", "category": "設備設施", "item": "電視/娛樂設備", "standard": "正常顯示，遙控器有電"}, {"id": "88", "seq": 88, "location": "2樓休息室", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"id": "89", "seq": 89, "location": "2樓休息室", "category": "環境衛生", "item": "垃圾桶清理", "standard": "垃圾桶不超過8分滿，無異味"}, {"id": "90", "seq": 90, "location": "2樓休息室", "category": "保全管控", "item": "非使用時間門禁", "standard": "確認上鎖"}, {"id": "91", "seq": 91, "location": "14樓中繼水塔", "category": "水質管理", "item": "水塔外觀（裂縫/鏽蝕）", "standard": "塔體無滲漏、裂縫，金屬件無嚴重鏽蝕"}, {"id": "92", "seq": 92, "location": "14樓中繼水塔", "category": "水質管理", "item": "水位計/液位感應", "standard": "水位計讀數正常（70%–90%），感應器無故障警示"}, {"id": "93", "seq": 93, "location": "14樓中繼水塔", "category": "水質管理", "item": "水塔清潔紀錄", "standard": "確認清潔頻率（建議每半年1次），黏貼清潔日期標籤"}, {"id": "94", "seq": 94, "location": "14樓中繼水塔", "category": "設備設施", "item": "加壓泵運轉", "standard": "泵體運轉正常，無異聲、振動過大"}, {"id": "95", "seq": 95, "location": "14樓中繼水塔", "category": "設備設施", "item": "管線閥門外觀", "standard": "閥門無鏽蝕、漏水，開關標示清晰"}, {"id": "96", "seq": 96, "location": "14樓中繼水塔", "category": "設備設施", "item": "電控盤", "standard": "無異常警示燈號，斷路器正常"}, {"id": "97", "seq": 97, "location": "14樓中繼水塔", "category": "消防安全", "item": "消防水源確認", "standard": "消防水量達規定水位（依消防法規）"}, {"id": "98", "seq": 98, "location": "14樓中繼水塔", "category": "安全管控", "item": "水塔間門禁鎖具", "standard": "功能正常，門縫密合，防止閒雜人入內"}, {"id": "99", "seq": 99, "location": "14樓中繼水塔", "category": "安全管控", "item": "防墜設施（扶手/護欄）", "standard": "扶手牢固，護欄完好無缺損"}, {"id": "100", "seq": 100, "location": "26樓廚房", "category": "消防安全", "item": "廚房自動滅火系統（若有）", "standard": "控制箱無異常警示，噴嘴無阻塞"}, {"id": "101", "seq": 101, "location": "26樓廚房", "category": "消防安全", "item": "滅火器（K類/CO₂）", "standard": "有效期限未逾期，位置明確易取"}, {"id": "102", "seq": 102, "location": "26樓廚房", "category": "消防安全", "item": "排油煙管道清潔紀錄", "standard": "定期清潔（建議每季），標貼最近清潔日期"}, {"id": "103", "seq": 103, "location": "26樓廚房", "category": "設備安全", "item": "瓦斯/天然氣閥門", "standard": "無漏氣（嗅聞/偵測器），閥門標示正確"}, {"id": "104", "seq": 104, "location": "26樓廚房", "category": "設備安全", "item": "排油煙機運轉", "standard": "啟動正常，無異音，葉片無油垢積厚"}, {"id": "105", "seq": 105, "location": "26樓廚房", "category": "設備安全", "item": "冰箱/冷凍庫溫度", "standard": "冷藏0–7°C，冷凍≤-18°C（請記錄實測值）"}, {"id": "106", "seq": 106, "location": "26樓廚房", "category": "環境衛生", "item": "料理台/地板清潔", "standard": "無殘渣、油漬，地板防滑"}, {"id": "107", "seq": 107, "location": "26樓廚房", "category": "環境衛生", "item": "食材儲放管理", "standard": "食材離地放置，標示效期，先進先出"}, {"id": "108", "seq": 108, "location": "26樓廚房", "category": "設備設施", "item": "給排水管路", "standard": "水龍頭無滴漏，排水溝暢通無積垢"}, {"id": "109", "seq": 109, "location": "26樓廚房", "category": "保全管控", "item": "非使用時間門禁", "standard": "確認上鎖，瓦斯總閥關閉"}, {"id": "110", "seq": 110, "location": "頂樓水池", "category": "水質管理", "item": "水池外觀（裂縫/藻類）", "standard": "池壁無裂縫、滲漏，無明顯藻類滋生"}, {"id": "111", "seq": 111, "location": "頂樓水池", "category": "水質管理", "item": "水位計讀數", "standard": "水位正常（依設計水位），無異常下降"}, {"id": "112", "seq": 112, "location": "頂樓水池", "category": "水質管理", "item": "清潔紀錄", "standard": "清潔頻率合規（建議每半年），黏貼清潔日期"}, {"id": "113", "seq": 113, "location": "頂樓水池", "category": "設備設施", "item": "加壓泵/供水泵運轉", "standard": "泵體正常，無異聲、振動"}, {"id": "114", "seq": 114, "location": "頂樓水池", "category": "設備設施", "item": "管線閥門外觀", "standard": "無鏽蝕、漏水，標示清晰"}, {"id": "115", "seq": 115, "location": "頂樓水池", "category": "設備設施", "item": "電控盤", "standard": "無異常警示，斷路器正常"}, {"id": "116", "seq": 116, "location": "頂樓水池", "category": "安全管控", "item": "頂樓出入口門禁", "standard": "門鎖正常，嚴禁閒雜人入內"}, {"id": "117", "seq": 117, "location": "頂樓水池", "category": "安全管控", "item": "水池蓋板完好", "standard": "蓋板無破裂，蓋合確實，防止異物落入"}, {"id": "118", "seq": 118, "location": "頂樓水池", "category": "安全管控", "item": "防墜欄杆/護網", "standard": "欄杆牢固，護網無破洞"}, {"id": "119", "seq": 119, "location": "頂樓水池", "category": "氣候因素", "item": "雷雨季前後特殊檢查", "standard": "確認排水孔暢通，設備無積水受損"}, {"id": "120", "seq": 120, "location": "B棟一樓安全梯", "category": "消防安全", "item": "防火門自動關閉功能", "standard": "防火門無卡住，釋放後可自動關閉，門縫密合"}, {"id": "121", "seq": 121, "location": "B棟一樓安全梯", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"id": "122", "seq": 122, "location": "B棟一樓安全梯", "category": "消防安全", "item": "緊急照明燈", "standard": "亮燈正常，備用電源指示正常"}, {"id": "123", "seq": 123, "location": "B棟一樓安全梯", "category": "逃生通道", "item": "梯間無堆放雜物", "standard": "全段通暢，嚴禁放置物品"}, {"id": "124", "seq": 124, "location": "B棟一樓安全梯", "category": "逃生通道", "item": "逃生方向指示標誌", "standard": "清晰可辨，無褪色遮蔽"}, {"id": "125", "seq": 125, "location": "B棟一樓安全梯", "category": "環境衛生", "item": "牆面/地面清潔", "standard": "無污漬、塗鴉、積水"}, {"id": "126", "seq": 126, "location": "B棟一樓安全梯", "category": "設備設施", "item": "扶手穩固度", "standard": "無鬆動、鏽蝕"}, {"id": "127", "seq": 127, "location": "B棟頂樓", "category": "安全管控", "item": "頂樓出入口門禁", "standard": "門鎖正常，防止閒雜人入內"}, {"id": "128", "seq": 128, "location": "B棟頂樓", "category": "安全管控", "item": "防墜護欄完好", "standard": "欄杆牢固，無鬆脫、缺段（高度依法規≥1.1m）"}, {"id": "129", "seq": 129, "location": "B棟頂樓", "category": "設備設施", "item": "屋頂排水孔暢通", "standard": "無阻塞，雨水可順暢排出"}, {"id": "130", "seq": 130, "location": "B棟頂樓", "category": "設備設施", "item": "天線/機電設備固定", "standard": "固定螺絲牢固，設備無傾斜"}, {"id": "131", "seq": 131, "location": "B棟頂樓", "category": "設備設施", "item": "太陽能板/外牆設備（若有）", "standard": "無破損、鬆脫，連接線路固定"}, {"id": "132", "seq": 132, "location": "B棟頂樓", "category": "環境衛生", "item": "頂樓地面清潔", "standard": "無垃圾、積水，排水坡度正常"}, {"id": "133", "seq": 133, "location": "B棟頂樓", "category": "消防安全", "item": "消防水箱/水池（若有）", "standard": "水位正常，管線無鏽蝕漏水"}, {"id": "134", "seq": 134, "location": "B棟頂樓", "category": "氣候因素", "item": "強風/颱風後特殊檢查", "standard": "確認所有設備固定，無鬆脫受損"}, {"id": "135", "seq": 135, "location": "後哨", "category": "保全管控", "item": "人員進出登記", "standard": "訪客登記簿記錄完整，無漏填"}, {"id": "136", "seq": 136, "location": "後哨", "category": "保全管控", "item": "車輛進出管制", "standard": "車牌辨識/道閘運作正常，異常車輛拒入"}, {"id": "137", "seq": 137, "location": "後哨", "category": "保全管控", "item": "CCTV畫面監控", "standard": "所有鏡頭畫面清晰，錄影系統正常運作"}, {"id": "138", "seq": 138, "location": "後哨", "category": "保全管控", "item": "對講機/通訊設備", "standard": "與管理室通訊正常，電池電量足夠"}, {"id": "139", "seq": 139, "location": "後哨", "category": "設備設施", "item": "照明燈具（夜間重點）", "standard": "哨所內外照明正常，死角補光充足"}, {"id": "140", "seq": 140, "location": "後哨", "category": "設備設施", "item": "道閘/柵欄機械狀態", "standard": "升降順暢，感應器正常，無卡頓"}, {"id": "141", "seq": 141, "location": "後哨", "category": "設備設施", "item": "緊急警報/一鍵求助", "standard": "按鈕功能正常，線路無中斷"}, {"id": "142", "seq": 142, "location": "後哨", "category": "環境衛生", "item": "哨所清潔", "standard": "內部整潔，無食物殘留，制服儀容端正"}, {"id": "143", "seq": 143, "location": "後哨", "category": "緊急應變", "item": "緊急聯絡表張貼", "standard": "最新版緊急電話表（警局/消防/物管公司）張貼於明顯位置"}, {"id": "144", "seq": 144, "location": "後哨", "category": "緊急應變", "item": "值班日誌記錄", "standard": "每班次完整填寫，無空白欄位"}];
+const KEY = "community_inspection_records_v3";
+let records = JSON.parse(localStorage.getItem(KEY) || "{}");
+let currentLocation = "";
 
-  <label>備註：</label><br>
-  <textarea id="note" placeholder="輸入異常內容"></textarea><br><br>
+function save(){ localStorage.setItem(KEY, JSON.stringify(records)); refreshStats(); }
+function locations(){ return [...new Set(CHECK_ITEMS.map(x=>x.location))]; }
+function locItems(loc){ return CHECK_ITEMS.filter(x=>x.location===loc); }
+function rec(id){ if(!records[id]) records[id]={status:"",note:"",action:"",due:"",photo:"",updatedAt:""}; return records[id]; }
+function statusLabel(s){ return s==="normal"?"正常":s==="attention"?"待注意":s==="abnormal"?"異常":s==="na"?"不適用":"未填"; }
+function statusClass(s){ return s==="normal"?"normal":s==="attention"?"attention":s==="abnormal"?"abnormal":""; }
 
-  <button onclick="submitForm()">送出</button>
+function refreshStats(){
+  document.getElementById("statLoc").textContent=locations().length;
+  document.getElementById("statItems").textContent=CHECK_ITEMS.length;
+  const vals=Object.values(records);
+  document.getElementById("statDone").textContent=vals.filter(r=>r.status).length;
+  document.getElementById("statBad").textContent=vals.filter(r=>r.status==="abnormal").length;
+  renderLocations();
+}
 
-  <p id="result"></p>
+function renderLocations(){
+  const box=document.getElementById("locations"); box.innerHTML="";
+  locations().forEach(loc=>{
+    const its=locItems(loc), done=its.filter(i=>rec(i.id).status).length, bad=its.filter(i=>rec(i.id).status==="abnormal").length, att=its.filter(i=>rec(i.id).status==="attention").length;
+    const div=document.createElement("div"); div.className="card loc-card"; div.onclick=()=>openLoc(loc);
+    div.innerHTML=`<div class="row"><div><div class="item-title">${loc}</div><div class="meta">${done} / ${its.length} 項完成</div></div><div>${bad?`<span class="badge red">異常 ${bad}</span>`:att?`<span class="badge orange">待注意 ${att}</span>`:`<span class="badge green">正常</span>`}</div></div><div class="progress"><div class="bar" style="width:${Math.round(done/its.length*100)}%"></div></div>`;
+    box.appendChild(div);
+  });
+}
 
-  <script src="app.js"></script>
+function openLoc(loc){
+  currentLocation=loc;
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("abnormalPage").classList.add("hidden");
+  document.getElementById("inspect").classList.remove("hidden");
+  document.getElementById("locTitle").textContent=loc;
+  renderItems();
+}
 
+function renderItems(){
+  const box=document.getElementById("items"); box.innerHTML="";
+  const its=locItems(currentLocation);
+  const done=its.filter(i=>rec(i.id).status).length;
+  document.getElementById("locProgress").textContent=`${done} / ${its.length}`;
+  document.getElementById("locBar").style.width=Math.round(done/its.length*100)+"%";
+  its.forEach(i=>{
+    const r=rec(i.id);
+    const div=document.createElement("div"); div.className=`card item-card ${statusClass(r.status)}`;
+    div.innerHTML=`
+      <div class="row"><span class="badge">${i.category}</span><span class="small">#${i.seq}</span></div>
+      <div class="item-title">${i.item}</div>
+      <div class="std">標準：${i.standard}</div>
+      <div class="btns">
+        <button class="ok ${r.status==='normal'?'active':''}" onclick="setStatus('${i.id}','normal')">正常</button>
+        <button class="warn ${r.status==='attention'?'active':''}" onclick="setStatus('${i.id}','attention')">待注意</button>
+        <button class="danger ${r.status==='abnormal'?'active':''}" onclick="setStatus('${i.id}','abnormal')">異常</button>
+        <button class="na ${r.status==='na'?'active':''}" onclick="setStatus('${i.id}','na')">N/A</button>
+      </div>
+      <div class="${(r.status==='abnormal'||r.status==='attention')?'':'hidden'}" style="margin-top:10px">
+        <label>${r.status==='abnormal'?'<span class="req">*</span> ':''}異常/待注意說明</label>
+        <textarea oninput="updateField('${i.id}','note',this.value)" placeholder="請詳述狀況">${r.note||''}</textarea>
+        <label>處理方式</label>
+        <textarea oninput="updateField('${i.id}','action',this.value)" placeholder="已處理/通報廠商/列管追蹤">${r.action||''}</textarea>
+        <label>預計完成日</label>
+        <input type="date" value="${r.due||''}" onchange="updateField('${i.id}','due',this.value)">
+        <label>拍照上傳</label>
+        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(event,'${i.id}')">
+        ${r.photo?`<img class="photo-preview" src="${r.photo}">`:''}
+      </div>
+    `;
+    box.appendChild(div);
+  });
+}
+
+function setStatus(id,status){ const r=rec(id); r.status=status; r.updatedAt=new Date().toLocaleString(); save(); renderItems(); }
+function updateField(id,field,val){ const r=rec(id); r[field]=val; r.updatedAt=new Date().toLocaleString(); save(); }
+function handlePhoto(e,id){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=()=>{ rec(id).photo=reader.result; rec(id).updatedAt=new Date().toLocaleString(); save(); renderItems(); };
+  reader.readAsDataURL(file);
+}
+function markAllNormal(){ if(!confirm("確定將本巡檢點未填項目全部設為正常？")) return; locItems(currentLocation).forEach(i=>{ if(!rec(i.id).status) setStatusNoRender(i.id,"normal"); }); save(); renderItems(); }
+function setStatusNoRender(id,status){ const r=rec(id); r.status=status; r.updatedAt=new Date().toLocaleString(); }
+function goHome(){ document.getElementById("inspect").classList.add("hidden"); document.getElementById("abnormalPage").classList.add("hidden"); document.getElementById("home").classList.remove("hidden"); refreshStats(); }
+function showAbnormal(){
+  document.getElementById("home").classList.add("hidden"); document.getElementById("inspect").classList.add("hidden"); document.getElementById("abnormalPage").classList.remove("hidden");
+  const box=document.getElementById("abnormalList"); box.innerHTML="";
+  const list=CHECK_ITEMS.filter(i=>["abnormal","attention"].includes(rec(i.id).status));
+  if(!list.length){ box.innerHTML='<div class="card">目前沒有異常或待注意。</div>'; return; }
+  list.forEach(i=>{ const r=rec(i.id); const div=document.createElement("div"); div.className=`card item-card ${statusClass(r.status)}`; div.innerHTML=`<div class="row"><b>${i.location}</b><span class="badge ${r.status==='abnormal'?'red':'orange'}">${statusLabel(r.status)}</span></div><div class="item-title">${i.item}</div><div class="std">${i.standard}</div><p><b>說明：</b>${r.note||'未填'}</p><p><b>處理：</b>${r.action||'未填'}</p><p><b>完成日：</b>${r.due||'未填'}</p>${r.photo?`<img class="photo-preview" src="${r.photo}">`:''}`; box.appendChild(div); });
+}
+function exportCSV(){
+  const inspector=document.getElementById("inspector").value||"";
+  const shift=document.getElementById("shift").value||"";
+  const weather=document.getElementById("weather").value||"";
+  const header=["日期時間","巡檢人員","班別","天氣","巡檢點","類別","點檢項目","檢查標準","判定","說明","處理方式","預計完成日","有無照片"];
+  const lines=[header];
+  CHECK_ITEMS.forEach(i=>{ const r=rec(i.id); lines.push([r.updatedAt||"",inspector,shift,weather,i.location,i.category,i.item,i.standard,statusLabel(r.status),r.note||"",r.action||"",r.due||"",r.photo?"有":"無"]); });
+  const csv="\ufeff"+lines.map(row=>row.map(v=>`"${String(v).replaceAll('"','""')}"`).join(",")).join("\n");
+  const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="社區巡檢紀錄_"+new Date().toISOString().slice(0,10)+".csv"; a.click();
+}
+function clearAll(){ if(confirm("確定清空本機所有巡檢紀錄？")){ records={}; save(); goHome(); } }
+refreshStats();
+</script>
 </body>
 </html>
