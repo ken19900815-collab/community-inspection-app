@@ -2,463 +2,74 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>社區走動式巡檢系統</title>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>社區巡檢管理系統</title>
 <style>
-:root {
-  --blue:#12365d; --blue2:#1f5f99; --bg:#f4f7fb; --card:#fff; --line:#dfe7f1;
-  --green:#168a4a; --orange:#d98200; --red:#d93025; --gray:#6b7280;
-}
-* { box-sizing:border-box; }
-body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif; background:var(--bg); color:#172033; padding-bottom:95px; }
-header { position:sticky; top:0; z-index:20; background:linear-gradient(135deg,var(--blue),var(--blue2)); color:white; padding:16px 16px 14px; box-shadow:0 4px 16px rgba(0,0,0,.18); }
-h1 { font-size:20px; margin:0 0 6px; }
-.sub { font-size:13px; opacity:.9; }
-.wrap { padding:14px; max-width:900px; margin:0 auto; }
-.grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
-.stat { background:var(--card); border-radius:16px; padding:14px; box-shadow:0 2px 10px rgba(16,35,60,.08); border:1px solid var(--line); }
-.stat b { display:block; font-size:24px; margin-top:4px; }
-.card { background:var(--card); border:1px solid var(--line); border-radius:18px; padding:14px; margin:10px 0; box-shadow:0 2px 12px rgba(16,35,60,.08); }
-.loc-card { display:flex; justify-content:space-between; align-items:center; gap:10px; cursor:pointer; }
-.loc-title { font-weight:800; font-size:17px; }
-.badge { border-radius:999px; padding:5px 9px; font-size:12px; font-weight:700; background:#edf2f7; color:#334155; white-space:nowrap; }
-.badge.red { background:#fde8e7; color:var(--red); }
-.badge.orange { background:#fff4df; color:var(--orange); }
-.badge.green { background:#e5f6ec; color:var(--green); }
-button { border:0; border-radius:14px; padding:12px 14px; font-size:16px; font-weight:800; cursor:pointer; }
-.primary { background:var(--blue2); color:white; width:100%; }
-.secondary { background:#e8eef6; color:#1b3553; }
-.danger { background:var(--red); color:white; }
-.tabs { display:flex; gap:8px; margin:12px 0; overflow-x:auto; padding-bottom:2px; }
-.tab { flex:1; min-width:92px; background:white; border:1px solid var(--line); color:#334155; }
-.tab.active { background:var(--blue2); color:white; }
-.item-card { border-left:6px solid #cbd5e1; }
-.item-card.ok { border-left-color:var(--green); background:#fbfffc; }
-.item-card.warn { border-left-color:var(--orange); background:#fffdf7; }
-.item-card.bad { border-left-color:var(--red); background:#fffafa; }
-.item-head { display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
-.item-title { font-weight:800; font-size:16px; }
-.item-meta { color:var(--gray); font-size:13px; margin-top:5px; line-height:1.45; }
-.standard { margin-top:8px; font-size:14px; line-height:1.55; background:#f8fafc; padding:10px; border-radius:12px; color:#334155; }
-.result-buttons { display:grid; grid-template-columns:repeat(4,1fr); gap:7px; margin-top:12px; }
-.result-buttons button { padding:10px 4px; font-size:14px; background:#eef2f7; color:#334155; }
-.result-buttons button.selected.ok { background:var(--green); color:white; }
-.result-buttons button.selected.warn { background:var(--orange); color:white; }
-.result-buttons button.selected.bad { background:var(--red); color:white; }
-.result-buttons button.selected.na { background:#64748b; color:white; }
-textarea,input,select { width:100%; border:1px solid #cbd5e1; border-radius:12px; padding:11px; font-size:16px; background:white; }
-label { display:block; margin:12px 0 6px; font-weight:800; color:#334155; }
-.detail { display:none; margin-top:10px; }
-.detail.show { display:block; }
-.photo-preview { margin-top:8px; max-width:100%; border-radius:12px; border:1px solid var(--line); display:none; }
-.bottom-bar { position:fixed; left:0; right:0; bottom:0; z-index:50; padding:10px 14px calc(10px + env(safe-area-inset-bottom)); background:rgba(244,247,251,.94); backdrop-filter: blur(8px); border-top:1px solid var(--line); }
-.bottom-inner { display:flex; gap:8px; max-width:900px; margin:auto; }
-.bottom-inner button { flex:1; }
-.hidden { display:none !important; }
-.toast { position:fixed; left:16px; right:16px; bottom:92px; background:#111827; color:white; border-radius:14px; padding:12px 14px; z-index:80; display:none; text-align:center; font-weight:700; }
-.empty { text-align:center; color:#64748b; padding:28px 12px; }
-.small { font-size:13px; color:#64748b; line-height:1.5; }
-.section-title { margin:18px 0 8px; font-size:18px; font-weight:900; }
-.search-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-@media (min-width:700px) { .grid{grid-template-columns:repeat(4,1fr)} .locations{display:grid;grid-template-columns:repeat(2,1fr);gap:10px} .card{margin:0} }
-@media print { header,.tabs,.bottom-bar,button,input[type=file]{display:none!important} body{background:white;padding:0} .card{box-shadow:none;break-inside:avoid} }
+:root{--blue:#12345b;--light:#f3f6fb;--green:#1b8f4d;--orange:#f59e0b;--red:#dc2626;--gray:#667085;--card:#fff;--line:#d9e2ef;}
+*{box-sizing:border-box}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans TC",Arial,sans-serif;background:var(--light);color:#111827;padding-bottom:110px}.top{background:linear-gradient(135deg,#0f2f55,#1e5799);color:white;padding:18px 16px 16px;border-bottom-left-radius:22px;border-bottom-right-radius:22px;box-shadow:0 6px 18px rgba(0,0,0,.18)}.top h1{font-size:22px;margin:0 0 8px}.meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.meta input,.meta select{width:100%;border:0;border-radius:12px;padding:11px;font-size:15px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 12px}.stat{background:#fff;border-radius:14px;text-align:center;padding:10px 4px;box-shadow:0 2px 10px rgba(16,24,40,.07)}.stat b{display:block;font-size:20px}.stat span{font-size:12px;color:var(--gray)}.tabs{display:flex;gap:8px;padding:0 12px 10px;position:sticky;top:0;background:var(--light);z-index:20}.tabs button{flex:1;border:0;border-radius:14px;padding:12px 6px;background:#e7edf7;color:#18385f;font-weight:700}.tabs button.active{background:var(--blue);color:#fff}.page{display:none;padding:0 12px}.page.active{display:block}.location-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.loc-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;min-height:92px;box-shadow:0 2px 8px rgba(16,24,40,.06)}.loc-card.done{border-color:#8bd0a8;background:#f0fff5}.loc-title{font-weight:800;font-size:16px}.loc-small{font-size:13px;color:var(--gray);margin-top:7px}.loc-badge{display:inline-block;margin-top:9px;border-radius:999px;padding:4px 8px;font-size:12px;background:#edf2f7}.section-title{display:flex;justify-content:space-between;align-items:center;margin:12px 0}.section-title h2{font-size:20px;margin:0}.back{border:0;background:#fff;border-radius:12px;padding:9px 12px;font-weight:700}.item-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(16,24,40,.06)}.item-card.normal{border-left:8px solid var(--green)}.item-card.watch{border-left:8px solid var(--orange);background:#fffbeb}.item-card.bad{border-left:8px solid var(--red);background:#fff1f2}.item-card.na{border-left:8px solid #94a3b8}.cat{display:inline-block;background:#e9eff8;color:#1e3a5f;border-radius:999px;padding:4px 8px;font-size:12px;font-weight:700}.item-title{font-size:17px;font-weight:800;margin:9px 0 6px}.standard{font-size:14px;color:#475467;line-height:1.45;background:#f8fafc;border-radius:12px;padding:9px}.judge{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.judge button{border:1px solid var(--line);border-radius:12px;padding:11px 4px;background:#fff;font-weight:800}.judge button.sel.normal{background:#dcfce7;color:#166534;border-color:#86efac}.judge button.sel.watch{background:#fef3c7;color:#92400e;border-color:#fbbf24}.judge button.sel.bad{background:#fee2e2;color:#991b1b;border-color:#f87171}.judge button.sel.na{background:#e2e8f0;color:#334155}.detail{display:none;margin-top:10px}.detail.show{display:block}.field{margin-top:10px}.field label{display:block;font-weight:700;font-size:14px;margin-bottom:5px}textarea,input[type="date"],input[type="text"]{width:100%;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:16px;background:white}textarea{min-height:74px;resize:vertical}.photo-preview{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.photo-preview img{width:70px;height:70px;object-fit:cover;border-radius:10px;border:1px solid #ddd}.bottom-submit{position:fixed;left:0;right:0;bottom:0;z-index:9999;background:rgba(255,255,255,.96);box-shadow:0 -4px 18px rgba(0,0,0,.18);padding:10px 12px calc(10px + env(safe-area-inset-bottom));display:none}.bottom-submit.show{display:block}.submit-btn{width:100%;border:0;border-radius:16px;padding:16px;background:var(--red);color:white;font-size:19px;font-weight:900}.subline{text-align:center;font-size:12px;color:#667085;margin-top:5px}.toolbar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}.toolbtn{border:0;border-radius:14px;padding:13px;background:var(--blue);color:white;font-weight:800}.toolbtn.gray{background:#475467}.record,.abnormal{background:#fff;border-radius:16px;padding:12px;margin-bottom:10px;border:1px solid var(--line)}.abnormal{border-left:8px solid var(--red)}.empty{text-align:center;color:#667085;background:#fff;border-radius:16px;padding:24px;margin-top:12px}.toast{position:fixed;left:16px;right:16px;bottom:90px;background:#111827;color:white;padding:13px;border-radius:14px;text-align:center;z-index:10000;display:none}.toast.show{display:block}@media(min-width:760px){.app{max-width:760px;margin:0 auto}.bottom-submit{left:50%;transform:translateX(-50%);max-width:760px}.location-grid{grid-template-columns:repeat(3,1fr)}}
 </style>
 </head>
 <body>
-<header>
-  <h1>社區走動式巡檢系統</h1>
-  <div class="sub" id="userLine">手機巡檢｜異常拍照｜主管追蹤｜本機紀錄</div>
+<div class="app">
+<header class="top">
+<h1>社區巡檢管理系統</h1>
+<div>LINE LIFF / 手機巡檢版</div>
+<div class="meta">
+<input id="inspector" placeholder="巡檢人員姓名" />
+<select id="shift"><option>早班</option><option>中班</option><option>晚班</option><option>夜班</option></select>
+<input id="weather" placeholder="天氣，例如晴/雨" />
+<input id="community" placeholder="社區名稱" />
+</div>
 </header>
-
-<div class="wrap">
-  <div class="grid">
-    <div class="stat">巡檢點<b id="statLoc">0</b></div>
-    <div class="stat">完成項目<b id="statDone">0</b></div>
-    <div class="stat">異常/待注意<b id="statAbn">0</b></div>
-    <div class="stat">歷史紀錄<b id="statRecords">0</b></div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab active" onclick="showPage('home')">巡檢</button>
-    <button class="tab" onclick="showPage('abnormal')">異常追蹤</button>
-    <button class="tab" onclick="showPage('records')">紀錄</button>
-    <button class="tab" onclick="showPage('settings')">設定</button>
-  </div>
-
-  <section id="page-home">
-    <div class="card">
-      <label>巡檢人員</label>
-      <input id="inspector" placeholder="請輸入姓名" oninput="saveMeta()" />
-      <div class="search-row">
-        <div>
-          <label>班別</label>
-          <select id="shift" onchange="saveMeta()">
-            <option>早班</option><option>中班</option><option>晚班</option><option>主管複核</option>
-          </select>
-        </div>
-        <div>
-          <label>天氣</label>
-          <select id="weather" onchange="saveMeta()">
-            <option>晴</option><option>陰</option><option>雨</option><option>颱風/強風</option><option>其他</option>
-          </select>
-        </div>
-      </div>
-    </div>
-    <div class="section-title">選擇巡檢點</div>
-    <div id="locationList" class="locations"></div>
-  </section>
-
-  <section id="page-inspection" class="hidden">
-    <div class="card">
-      <button class="secondary" onclick="backHome()">← 回巡檢點</button>
-      <h2 id="currentLocationTitle" style="margin:12px 0 4px;"></h2>
-      <div class="small">請逐項選擇判定；選「異常」或「待注意」時，系統會展開說明、處理方式與拍照欄位。</div>
-    </div>
-    <div id="inspectionItems"></div>
-  </section>
-
-  <section id="page-abnormal" class="hidden">
-    <div class="section-title">異常追蹤</div>
-    <div class="card small">此頁會列出目前尚未送出的異常/待注意，以及已送出紀錄內的異常項目。</div>
-    <div id="abnormalList"></div>
-  </section>
-
-  <section id="page-records" class="hidden">
-    <div class="section-title">巡檢紀錄</div>
-    <div class="card">
-      <button class="primary" onclick="exportCSV()">匯出 CSV</button>
-      <button class="secondary" onclick="window.print()" style="width:100%;margin-top:8px;">列印 / 轉 PDF</button>
-    </div>
-    <div id="recordList"></div>
-  </section>
-
-  <section id="page-settings" class="hidden">
-    <div class="section-title">設定 / 資料管理</div>
-    <div class="card">
-      <button class="danger" onclick="clearDraft()" style="width:100%;">清除目前未送出的巡檢草稿</button>
-      <button class="danger" onclick="clearAllRecords()" style="width:100%;margin-top:8px;">清除全部歷史紀錄</button>
-      <p class="small">照片會以瀏覽器本機暫存方式保存。若照片太多，手機瀏覽器可能容量不足；正式商用建議接雲端資料庫或 LINE 後端。</p>
-    </div>
-  </section>
+<div class="stats">
+<div class="stat"><b id="stTotal">0</b><span>總項目</span></div><div class="stat"><b id="stDone">0</b><span>已判定</span></div><div class="stat"><b id="stBad">0</b><span>異常</span></div><div class="stat"><b id="stPct">0%</b><span>完成率</span></div>
 </div>
-
-<div class="bottom-bar hidden" id="bottomBar">
-  <div class="bottom-inner">
-    <button class="secondary" onclick="saveDraft()">暫存</button>
-    <button class="danger" onclick="submitInspection()">送出巡檢</button>
-  </div>
+<nav class="tabs">
+<button id="tabLocations" class="active" onclick="showPage('locations')">巡檢點</button>
+<button id="tabAbnormal" onclick="showPage('abnormal')">異常追蹤</button>
+<button id="tabRecords" onclick="showPage('records')">紀錄匯出</button>
+</nav>
+<main id="locations" class="page active"><div class="section-title"><h2>選擇巡檢點</h2></div><div id="locationGrid" class="location-grid"></div></main>
+<main id="inspection" class="page"><div class="section-title"><button class="back" onclick="showPage('locations')">← 返回</button><h2 id="currentLocationTitle"></h2></div><div id="itemList"></div></main>
+<main id="abnormal" class="page"><div class="section-title"><h2>異常追蹤</h2></div><div id="abnormalList"></div></main>
+<main id="records" class="page"><div class="section-title"><h2>巡檢紀錄</h2></div><div class="toolbar"><button class="toolbtn" onclick="exportCSV()">匯出 CSV</button><button class="toolbtn gray" onclick="clearAll()">清除本機資料</button></div><div id="recordList"></div></main>
 </div>
+<div id="submitBar" class="bottom-submit"><button class="submit-btn" onclick="submitInspection()">送出巡檢</button><div class="subline" id="submitHint">請先選擇巡檢點並完成判定</div></div>
 <div id="toast" class="toast"></div>
-
 <script>
-const ITEMS = [{"seq": 1, "location": "B1庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"seq": 2, "location": "B1庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好無破損，閥門無鏽蝕"}, {"seq": 3, "location": "B1庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽物"}, {"seq": 4, "location": "B1庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬、紙屑，走道通暢"}, {"seq": 5, "location": "B1庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度不超過2.1m，通道寬度≥90cm"}, {"seq": 6, "location": "B1庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常亮燈，無破損燈管"}, {"seq": 7, "location": "B1庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"seq": 8, "location": "B1庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "電子鎖或傳統鎖功能正常，門縫密合"}, {"seq": 9, "location": "B1庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰，無死角"}, {"seq": 10, "location": "B2庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"seq": 11, "location": "B2庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好，閥門無鏽蝕"}, {"seq": 12, "location": "B2庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽"}, {"seq": 13, "location": "B2庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬，走道通暢"}, {"seq": 14, "location": "B2庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度≤2.1m，通道寬度≥90cm"}, {"seq": 15, "location": "B2庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無破損"}, {"seq": 16, "location": "B2庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"seq": 17, "location": "B2庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "功能正常，門縫密合"}, {"seq": 18, "location": "B2庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰"}, {"seq": 19, "location": "B3庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"seq": 20, "location": "B3庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好，閥門無鏽蝕"}, {"seq": 21, "location": "B3庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽"}, {"seq": 22, "location": "B3庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬，走道通暢"}, {"seq": 23, "location": "B3庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度≤2.1m，通道寬度≥90cm"}, {"seq": 24, "location": "B3庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無破損"}, {"seq": 25, "location": "B3庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"seq": 26, "location": "B3庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "功能正常，門縫密合"}, {"seq": 27, "location": "B3庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰"}, {"seq": 28, "location": "B4庫房", "category": "消防安全", "item": "滅火器有效期限", "standard": "有效期限未逾期，壓力表指針在綠色範圍"}, {"seq": 29, "location": "B4庫房", "category": "消防安全", "item": "消防栓箱外觀及水帶", "standard": "箱門可正常開啟，水帶完好，閥門無鏽蝕"}, {"seq": 30, "location": "B4庫房", "category": "消防安全", "item": "緊急出口指示燈", "standard": "亮燈正常，無遮蔽"}, {"seq": 31, "location": "B4庫房", "category": "環境衛生", "item": "地板乾燥清潔度", "standard": "無積水、油漬，走道通暢"}, {"seq": 32, "location": "B4庫房", "category": "環境衛生", "item": "儲物整齊度", "standard": "貨物堆疊高度≤2.1m，通道寬度≥90cm"}, {"seq": 33, "location": "B4庫房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無破損"}, {"seq": 34, "location": "B4庫房", "category": "設備設施", "item": "排水溝/地漏", "standard": "無阻塞、異味"}, {"seq": 35, "location": "B4庫房", "category": "保全管控", "item": "門禁鎖具", "standard": "功能正常，門縫密合"}, {"seq": 36, "location": "B4庫房", "category": "保全管控", "item": "CCTV畫面", "standard": "鏡頭角度正確，畫面清晰"}, {"seq": 37, "location": "A棟一樓安全梯", "category": "消防安全", "item": "防火門自動關閉功能", "standard": "防火門無卡住，釋放後可自動關閉，門縫密合"}, {"seq": 38, "location": "A棟一樓安全梯", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期，壓力指針正常"}, {"seq": 39, "location": "A棟一樓安全梯", "category": "消防安全", "item": "緊急照明燈（常亮/感應）", "standard": "燈具亮燈正常，備用電源指示正常"}, {"seq": 40, "location": "A棟一樓安全梯", "category": "消防安全", "item": "消防廣播/警報系統", "standard": "揚聲器外觀完好，無破損"}, {"seq": 41, "location": "A棟一樓安全梯", "category": "逃生通道", "item": "梯間無堆放雜物", "standard": "樓梯間全段通暢，嚴禁放置任何物品"}, {"seq": 42, "location": "A棟一樓安全梯", "category": "逃生通道", "item": "逃生方向指示貼紙/標誌", "standard": "清晰可辨，無褪色或遮蔽"}, {"seq": 43, "location": "A棟一樓安全梯", "category": "環境衛生", "item": "牆面/地面清潔", "standard": "無污漬、塗鴉、積水"}, {"seq": 44, "location": "A棟一樓安全梯", "category": "設備設施", "item": "扶手穩固度", "standard": "扶手無鬆動、鏽蝕"}, {"seq": 45, "location": "泳池", "category": "水質安全", "item": "餘氯濃度（ppm）", "standard": "維持1.0–3.0 ppm（請記錄實測值）"}, {"seq": 46, "location": "泳池", "category": "水質安全", "item": "pH值", "standard": "維持7.2–7.8（請記錄實測值）"}, {"seq": 47, "location": "泳池", "category": "水質安全", "item": "水面目視清澈度", "standard": "水面無雜物、水體清澈見底"}, {"seq": 48, "location": "泳池", "category": "設備設施", "item": "循環過濾泵運轉", "standard": "泵體運轉正常，無異聲、漏水"}, {"seq": 49, "location": "泳池", "category": "設備設施", "item": "排水孔/防夾蓋板", "standard": "蓋板完好，無破裂、鬆脫（安全法規必查項）"}, {"seq": 50, "location": "泳池", "category": "設備設施", "item": "池邊防滑墊", "standard": "完好無捲起，固定確實"}, {"seq": 51, "location": "泳池", "category": "消防安全", "item": "救生設備（救生圈/竿）", "standard": "定位懸掛，數量齊全，無破損"}, {"seq": 52, "location": "泳池", "category": "衛生管理", "item": "男女更衣室/淋浴間清潔", "standard": "地板無積水，鏡面乾淨，無異味"}, {"seq": 53, "location": "泳池", "category": "衛生管理", "item": "泳池周邊清潔", "standard": "無垃圾、濕腳踏墊乾淨"}, {"seq": 54, "location": "泳池", "category": "保全管控", "item": "非營業時間進出管控", "standard": "圍欄/門鎖關閉，無閒雜人進入"}, {"seq": 55, "location": "2樓家教室", "category": "環境衛生", "item": "地板清潔度", "standard": "無灰塵、汙漬，課桌椅擺放整齊"}, {"seq": 56, "location": "2樓家教室", "category": "環境衛生", "item": "白板/黑板清潔", "standard": "板面乾淨，板擦歸位"}, {"seq": 57, "location": "2樓家教室", "category": "設備設施", "item": "冷氣運轉與濾網", "standard": "冷氣正常運轉，濾網無積塵（每月清潔）"}, {"seq": 58, "location": "2樓家教室", "category": "設備設施", "item": "照明燈具", "standard": "全數正常，無閃爍破損"}, {"seq": 59, "location": "2樓家教室", "category": "設備設施", "item": "電源插座/延長線", "standard": "無裸露線路，延長線不過載"}, {"seq": 60, "location": "2樓家教室", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"seq": 61, "location": "2樓家教室", "category": "消防安全", "item": "緊急出口通暢", "standard": "門口無阻礙，可直接推開"}, {"seq": 62, "location": "2樓家教室", "category": "保全管控", "item": "非使用時間門禁上鎖", "standard": "課後確認上鎖，無遺留人員"}, {"seq": 63, "location": "2樓桌球室", "category": "環境衛生", "item": "地板清潔度", "standard": "無灰塵、球具歸位"}, {"seq": 64, "location": "2樓桌球室", "category": "環境衛生", "item": "桌球桌面清潔", "standard": "球桌面板清潔，桌腳穩固"}, {"seq": 65, "location": "2樓桌球室", "category": "設備設施", "item": "冷氣運轉", "standard": "正常運轉，無異音"}, {"seq": 66, "location": "2樓桌球室", "category": "設備設施", "item": "照明燈具（桌球需高照度）", "standard": "燈具全數正常，無閃爍（建議≥500 lux）"}, {"seq": 67, "location": "2樓桌球室", "category": "設備設施", "item": "電源插座", "standard": "無裸露線路"}, {"seq": 68, "location": "2樓桌球室", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"seq": 69, "location": "2樓桌球室", "category": "消防安全", "item": "緊急出口通暢", "standard": "門口無阻礙"}, {"seq": 70, "location": "2樓桌球室", "category": "器材管理", "item": "球具（球網/球拍/球）", "standard": "球網高度正常，球拍無破損，備用球充足"}, {"seq": 71, "location": "2樓桌球室", "category": "保全管控", "item": "非使用時間門禁上鎖", "standard": "確認上鎖"}, {"seq": 72, "location": "2樓健身房", "category": "設備安全", "item": "跑步機/橢圓機運轉", "standard": "機台啟動正常，緊急停止繩/按鈕功能正常"}, {"seq": 73, "location": "2樓健身房", "category": "設備安全", "item": "重訓器材螺絲鬆緊", "standard": "重量機固定螺絲、安全插銷完好，無鬆脫"}, {"seq": 74, "location": "2樓健身房", "category": "設備安全", "item": "地墊/防滑墊完好", "standard": "無破裂、翹起"}, {"seq": 75, "location": "2樓健身房", "category": "設備安全", "item": "鏡面完好度", "standard": "無裂縫、鬆脫，固定確實"}, {"seq": 76, "location": "2樓健身房", "category": "環境衛生", "item": "地板清潔", "standard": "無汗漬、灰塵，器材擦拭乾淨"}, {"seq": 77, "location": "2樓健身房", "category": "設備設施", "item": "冷氣/通風換氣", "standard": "正常運轉，室內無悶熱異味"}, {"seq": 78, "location": "2樓健身房", "category": "設備設施", "item": "照明燈具", "standard": "全數正常"}, {"seq": 79, "location": "2樓健身房", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"seq": 80, "location": "2樓健身房", "category": "消防安全", "item": "緊急出口通暢", "standard": "門口無阻礙"}, {"seq": 81, "location": "2樓健身房", "category": "衛生管理", "item": "毛巾/清潔噴瓶補充", "standard": "毛巾架補充足量，消毒噴瓶有藥水"}, {"seq": 82, "location": "2樓健身房", "category": "保全管控", "item": "非使用時間門禁", "standard": "確認上鎖，無遺留人員"}, {"seq": 83, "location": "2樓休息室", "category": "環境衛生", "item": "沙發/桌椅清潔", "standard": "無食物殘渣、污漬，擺放整齊"}, {"seq": 84, "location": "2樓休息室", "category": "環境衛生", "item": "茶水間清潔（飲水機/微波爐）", "standard": "飲水機出水口定期消毒，微波爐內部清潔"}, {"seq": 85, "location": "2樓休息室", "category": "設備設施", "item": "冷氣運轉", "standard": "正常運轉，無異音"}, {"seq": 86, "location": "2樓休息室", "category": "設備設施", "item": "照明燈具", "standard": "全數正常"}, {"seq": 87, "location": "2樓休息室", "category": "設備設施", "item": "電視/娛樂設備", "standard": "正常顯示，遙控器有電"}, {"seq": 88, "location": "2樓休息室", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"seq": 89, "location": "2樓休息室", "category": "環境衛生", "item": "垃圾桶清理", "standard": "垃圾桶不超過8分滿，無異味"}, {"seq": 90, "location": "2樓休息室", "category": "保全管控", "item": "非使用時間門禁", "standard": "確認上鎖"}, {"seq": 91, "location": "14樓中繼水塔", "category": "水質管理", "item": "水塔外觀（裂縫/鏽蝕）", "standard": "塔體無滲漏、裂縫，金屬件無嚴重鏽蝕"}, {"seq": 92, "location": "14樓中繼水塔", "category": "水質管理", "item": "水位計/液位感應", "standard": "水位計讀數正常（70%–90%），感應器無故障警示"}, {"seq": 93, "location": "14樓中繼水塔", "category": "水質管理", "item": "水塔清潔紀錄", "standard": "確認清潔頻率（建議每半年1次），黏貼清潔日期標籤"}, {"seq": 94, "location": "14樓中繼水塔", "category": "設備設施", "item": "加壓泵運轉", "standard": "泵體運轉正常，無異聲、振動過大"}, {"seq": 95, "location": "14樓中繼水塔", "category": "設備設施", "item": "管線閥門外觀", "standard": "閥門無鏽蝕、漏水，開關標示清晰"}, {"seq": 96, "location": "14樓中繼水塔", "category": "設備設施", "item": "電控盤", "standard": "無異常警示燈號，斷路器正常"}, {"seq": 97, "location": "14樓中繼水塔", "category": "消防安全", "item": "消防水源確認", "standard": "消防水量達規定水位（依消防法規）"}, {"seq": 98, "location": "14樓中繼水塔", "category": "安全管控", "item": "水塔間門禁鎖具", "standard": "功能正常，門縫密合，防止閒雜人入內"}, {"seq": 99, "location": "14樓中繼水塔", "category": "安全管控", "item": "防墜設施（扶手/護欄）", "standard": "扶手牢固，護欄完好無缺損"}, {"seq": 100, "location": "26樓廚房", "category": "消防安全", "item": "廚房自動滅火系統（若有）", "standard": "控制箱無異常警示，噴嘴無阻塞"}, {"seq": 101, "location": "26樓廚房", "category": "消防安全", "item": "滅火器（K類/CO₂）", "standard": "有效期限未逾期，位置明確易取"}, {"seq": 102, "location": "26樓廚房", "category": "消防安全", "item": "排油煙管道清潔紀錄", "standard": "定期清潔（建議每季），標貼最近清潔日期"}, {"seq": 103, "location": "26樓廚房", "category": "設備安全", "item": "瓦斯/天然氣閥門", "standard": "無漏氣（嗅聞/偵測器），閥門標示正確"}, {"seq": 104, "location": "26樓廚房", "category": "設備安全", "item": "排油煙機運轉", "standard": "啟動正常，無異音，葉片無油垢積厚"}, {"seq": 105, "location": "26樓廚房", "category": "設備安全", "item": "冰箱/冷凍庫溫度", "standard": "冷藏0–7°C，冷凍≤-18°C（請記錄實測值）"}, {"seq": 106, "location": "26樓廚房", "category": "環境衛生", "item": "料理台/地板清潔", "standard": "無殘渣、油漬，地板防滑"}, {"seq": 107, "location": "26樓廚房", "category": "環境衛生", "item": "食材儲放管理", "standard": "食材離地放置，標示效期，先進先出"}, {"seq": 108, "location": "26樓廚房", "category": "設備設施", "item": "給排水管路", "standard": "水龍頭無滴漏，排水溝暢通無積垢"}, {"seq": 109, "location": "26樓廚房", "category": "保全管控", "item": "非使用時間門禁", "standard": "確認上鎖，瓦斯總閥關閉"}, {"seq": 110, "location": "頂樓水池", "category": "水質管理", "item": "水池外觀（裂縫/藻類）", "standard": "池壁無裂縫、滲漏，無明顯藻類滋生"}, {"seq": 111, "location": "頂樓水池", "category": "水質管理", "item": "水位計讀數", "standard": "水位正常（依設計水位），無異常下降"}, {"seq": 112, "location": "頂樓水池", "category": "水質管理", "item": "清潔紀錄", "standard": "清潔頻率合規（建議每半年），黏貼清潔日期"}, {"seq": 113, "location": "頂樓水池", "category": "設備設施", "item": "加壓泵/供水泵運轉", "standard": "泵體正常，無異聲、振動"}, {"seq": 114, "location": "頂樓水池", "category": "設備設施", "item": "管線閥門外觀", "standard": "無鏽蝕、漏水，標示清晰"}, {"seq": 115, "location": "頂樓水池", "category": "設備設施", "item": "電控盤", "standard": "無異常警示，斷路器正常"}, {"seq": 116, "location": "頂樓水池", "category": "安全管控", "item": "頂樓出入口門禁", "standard": "門鎖正常，嚴禁閒雜人入內"}, {"seq": 117, "location": "頂樓水池", "category": "安全管控", "item": "水池蓋板完好", "standard": "蓋板無破裂，蓋合確實，防止異物落入"}, {"seq": 118, "location": "頂樓水池", "category": "安全管控", "item": "防墜欄杆/護網", "standard": "欄杆牢固，護網無破洞"}, {"seq": 119, "location": "頂樓水池", "category": "氣候因素", "item": "雷雨季前後特殊檢查", "standard": "確認排水孔暢通，設備無積水受損"}, {"seq": 120, "location": "B棟一樓安全梯", "category": "消防安全", "item": "防火門自動關閉功能", "standard": "防火門無卡住，釋放後可自動關閉，門縫密合"}, {"seq": 121, "location": "B棟一樓安全梯", "category": "消防安全", "item": "滅火器位置與有效期", "standard": "定位放置，期限未逾期"}, {"seq": 122, "location": "B棟一樓安全梯", "category": "消防安全", "item": "緊急照明燈", "standard": "亮燈正常，備用電源指示正常"}, {"seq": 123, "location": "B棟一樓安全梯", "category": "逃生通道", "item": "梯間無堆放雜物", "standard": "全段通暢，嚴禁放置物品"}, {"seq": 124, "location": "B棟一樓安全梯", "category": "逃生通道", "item": "逃生方向指示標誌", "standard": "清晰可辨，無褪色遮蔽"}, {"seq": 125, "location": "B棟一樓安全梯", "category": "環境衛生", "item": "牆面/地面清潔", "standard": "無污漬、塗鴉、積水"}, {"seq": 126, "location": "B棟一樓安全梯", "category": "設備設施", "item": "扶手穩固度", "standard": "無鬆動、鏽蝕"}, {"seq": 127, "location": "B棟頂樓", "category": "安全管控", "item": "頂樓出入口門禁", "standard": "門鎖正常，防止閒雜人入內"}, {"seq": 128, "location": "B棟頂樓", "category": "安全管控", "item": "防墜護欄完好", "standard": "欄杆牢固，無鬆脫、缺段（高度依法規≥1.1m）"}, {"seq": 129, "location": "B棟頂樓", "category": "設備設施", "item": "屋頂排水孔暢通", "standard": "無阻塞，雨水可順暢排出"}, {"seq": 130, "location": "B棟頂樓", "category": "設備設施", "item": "天線/機電設備固定", "standard": "固定螺絲牢固，設備無傾斜"}, {"seq": 131, "location": "B棟頂樓", "category": "設備設施", "item": "太陽能板/外牆設備（若有）", "standard": "無破損、鬆脫，連接線路固定"}, {"seq": 132, "location": "B棟頂樓", "category": "環境衛生", "item": "頂樓地面清潔", "standard": "無垃圾、積水，排水坡度正常"}, {"seq": 133, "location": "B棟頂樓", "category": "消防安全", "item": "消防水箱/水池（若有）", "standard": "水位正常，管線無鏽蝕漏水"}, {"seq": 134, "location": "B棟頂樓", "category": "氣候因素", "item": "強風/颱風後特殊檢查", "standard": "確認所有設備固定，無鬆脫受損"}, {"seq": 135, "location": "後哨", "category": "保全管控", "item": "人員進出登記", "standard": "訪客登記簿記錄完整，無漏填"}, {"seq": 136, "location": "後哨", "category": "保全管控", "item": "車輛進出管制", "standard": "車牌辨識/道閘運作正常，異常車輛拒入"}, {"seq": 137, "location": "後哨", "category": "保全管控", "item": "CCTV畫面監控", "standard": "所有鏡頭畫面清晰，錄影系統正常運作"}, {"seq": 138, "location": "後哨", "category": "保全管控", "item": "對講機/通訊設備", "standard": "與管理室通訊正常，電池電量足夠"}, {"seq": 139, "location": "後哨", "category": "設備設施", "item": "照明燈具（夜間重點）", "standard": "哨所內外照明正常，死角補光充足"}, {"seq": 140, "location": "後哨", "category": "設備設施", "item": "道閘/柵欄機械狀態", "standard": "升降順暢，感應器正常，無卡頓"}, {"seq": 141, "location": "後哨", "category": "設備設施", "item": "緊急警報/一鍵求助", "standard": "按鈕功能正常，線路無中斷"}, {"seq": 142, "location": "後哨", "category": "環境衛生", "item": "哨所清潔", "standard": "內部整潔，無食物殘留，制服儀容端正"}, {"seq": 143, "location": "後哨", "category": "緊急應變", "item": "緊急聯絡表張貼", "standard": "最新版緊急電話表（警局/消防/物管公司）張貼於明顯位置"}, {"seq": 144, "location": "後哨", "category": "緊急應變", "item": "值班日誌記錄", "standard": "每班次完整填寫，無空白欄位"}];
-const LOCATIONS = [...new Set(ITEMS.map(x => x.location))];
-let currentLocation = "";
-let draft = JSON.parse(localStorage.getItem("inspectionDraft_v3") || "{}");
-let records = JSON.parse(localStorage.getItem("inspectionRecords_v3") || "[]");
-let meta = JSON.parse(localStorage.getItem("inspectionMeta_v3") || "{}");
-
-function $(id) { return document.getElementById(id); }
-function todayStr() { return new Date().toLocaleString("zh-TW", {hour12:false}); }
-function keyOf(seq) { return "i_" + seq; }
-
-async function initLiffSafe() {
-  try {
-    // 若之後有 LIFF ID，可在這裡填入：await liff.init({ liffId: "你的LIFF ID" });
-    if (window.liff && false) {}
-  } catch(e) {}
-}
-
-function init() {
-  $("inspector").value = meta.inspector || "";
-  $("shift").value = meta.shift || "早班";
-  $("weather").value = meta.weather || "晴";
-  renderLocations();
-  updateStats();
-  initLiffSafe();
-}
-
-function saveMeta() {
-  meta = {
-    inspector: $("inspector").value.trim(),
-    shift: $("shift").value,
-    weather: $("weather").value
-  };
-  localStorage.setItem("inspectionMeta_v3", JSON.stringify(meta));
-}
-
-function showToast(msg) {
-  const t=$("toast"); t.textContent=msg; t.style.display="block";
-  setTimeout(()=>t.style.display="none",1800);
-}
-
-function showPage(page) {
-  ["home","inspection","abnormal","records","settings"].forEach(p => $("page-"+p).classList.add("hidden"));
-  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
-  if(page==="home") document.querySelectorAll(".tab")[0].classList.add("active");
-  if(page==="abnormal") document.querySelectorAll(".tab")[1].classList.add("active");
-  if(page==="records") document.querySelectorAll(".tab")[2].classList.add("active");
-  if(page==="settings") document.querySelectorAll(".tab")[3].classList.add("active");
-  $("page-"+page).classList.remove("hidden");
-  $("bottomBar").classList.toggle("hidden", page !== "inspection");
-  if(page==="abnormal") renderAbnormal();
-  if(page==="records") renderRecords();
-  updateStats();
-}
-
-function renderLocations() {
-  const box = $("locationList");
-  box.innerHTML = "";
-  LOCATIONS.forEach((loc, idx) => {
-    const locItems = ITEMS.filter(x=>x.location===loc);
-    const done = locItems.filter(x => draft[keyOf(x.seq)] && draft[keyOf(x.seq)].result).length;
-    const abn = locItems.filter(x => ["異常","待注意"].includes(draft[keyOf(x.seq)]?.result)).length;
-    const div=document.createElement("div");
-    div.className="card loc-card";
-    div.onclick=()=>openLocation(loc);
-    div.innerHTML = `
-      <div>
-        <div class="loc-title">${idx+1}. ${loc}</div>
-        <div class="small">${done} / ${locItems.length} 項完成</div>
-      </div>
-      <div>
-        <span class="badge ${abn ? 'red' : (done===locItems.length ? 'green':'')}">${abn ? abn+'異常' : (done===locItems.length ? '完成':'未完成')}</span>
-      </div>`;
-    box.appendChild(div);
-  });
-}
-
-function openLocation(loc) {
-  currentLocation = loc;
-  $("currentLocationTitle").textContent = loc;
-  renderInspectionItems();
-  showPage("inspection");
-}
-
-function backHome() {
-  currentLocation = "";
-  renderLocations();
-  showPage("home");
-}
-
-function renderInspectionItems() {
-  const box=$("inspectionItems");
-  const arr=ITEMS.filter(x=>x.location===currentLocation);
-  box.innerHTML="";
-  arr.forEach(x => {
-    const k=keyOf(x.seq);
-    if(!draft[k]) draft[k]={};
-    const d=draft[k];
-    const cls = d.result==="正常" ? "ok" : d.result==="待注意" ? "warn" : d.result==="異常" ? "bad" : "";
-    const detailShow = ["異常","待注意"].includes(d.result) ? "show" : "";
-    const div=document.createElement("div");
-    div.className=`card item-card ${cls}`;
-    div.id=`card_${x.seq}`;
-    div.innerHTML=`
-      <div class="item-head">
-        <div>
-          <div class="item-title">${x.seq}. ${x.item}</div>
-          <div class="item-meta">${x.category}</div>
-        </div>
-        <span class="badge">${d.result || '未判定'}</span>
-      </div>
-      <div class="standard"><b>檢查標準：</b>${escapeHtml(x.standard)}</div>
-      <div class="result-buttons">
-        <button class="${d.result==='正常'?'selected ok':''}" onclick="setResult(${x.seq},'正常')">正常</button>
-        <button class="${d.result==='待注意'?'selected warn':''}" onclick="setResult(${x.seq},'待注意')">待注意</button>
-        <button class="${d.result==='異常'?'selected bad':''}" onclick="setResult(${x.seq},'異常')">異常</button>
-        <button class="${d.result==='不適用'?'selected na':''}" onclick="setResult(${x.seq},'不適用')">N/A</button>
-      </div>
-      <div class="detail ${detailShow}" id="detail_${x.seq}">
-        <label>異常 / 待注意說明</label>
-        <textarea id="note_${x.seq}" placeholder="請輸入現況、位置、影響範圍" oninput="updateField(${x.seq},'note',this.value)">${escapeHtml(d.note||'')}</textarea>
-        <label>處理方式</label>
-        <textarea id="action_${x.seq}" placeholder="例如：已通知廠商、現場已排除、列入追蹤" oninput="updateField(${x.seq},'action',this.value)">${escapeHtml(d.action||'')}</textarea>
-        <label>預計完成日</label>
-        <input type="date" value="${d.due||''}" onchange="updateField(${x.seq},'due',this.value)" />
-        <label>拍照上傳</label>
-        <input type="file" accept="image/*" capture="environment" onchange="handlePhoto(event,${x.seq})" />
-        <img id="photo_${x.seq}" class="photo-preview" src="${d.photo||''}" style="${d.photo?'display:block':''}" />
-      </div>`;
-    box.appendChild(div);
-  });
-}
-
-function escapeHtml(str) {
-  return String(str||"").replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
-}
-
-function setResult(seq, result) {
-  const k=keyOf(seq);
-  if(!draft[k]) draft[k]={};
-  draft[k].result=result;
-  draft[k].updatedAt=todayStr();
-  saveDraft(false);
-  renderInspectionItems();
-  updateStats();
-}
-
-function updateField(seq, field, value) {
-  const k=keyOf(seq);
-  if(!draft[k]) draft[k]={};
-  draft[k][field]=value;
-  draft[k].updatedAt=todayStr();
-  localStorage.setItem("inspectionDraft_v3", JSON.stringify(draft));
-  updateStats();
-}
-
-function handlePhoto(event, seq) {
-  const file = event.target.files && event.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const k=keyOf(seq);
-    if(!draft[k]) draft[k]={};
-    draft[k].photo = e.target.result;
-    draft[k].photoName = file.name || "photo.jpg";
-    localStorage.setItem("inspectionDraft_v3", JSON.stringify(draft));
-    const img=$("photo_"+seq);
-    if(img) { img.src=e.target.result; img.style.display="block"; }
-    showToast("照片已加入");
-  };
-  reader.readAsDataURL(file);
-}
-
-function saveDraft(toast=true) {
-  localStorage.setItem("inspectionDraft_v3", JSON.stringify(draft));
-  renderLocations();
-  updateStats();
-  if(toast) showToast("已暫存");
-}
-
-function submitInspection() {
-  saveMeta();
-  if(!currentLocation) { showToast("請先選擇巡檢點"); return; }
-  const arr=ITEMS.filter(x=>x.location===currentLocation);
-  const missing=arr.filter(x=>!draft[keyOf(x.seq)]?.result);
-  if(missing.length) {
-    if(!confirm(`尚有 ${missing.length} 個項目未判定，仍要送出嗎？`)) return;
-  }
-  const needDetail=arr.filter(x=>["異常","待注意"].includes(draft[keyOf(x.seq)]?.result) && !(draft[keyOf(x.seq)]?.note||"").trim());
-  if(needDetail.length) {
-    showToast("異常/待注意需填說明");
-    const first=needDetail[0].seq;
-    const el=$("note_"+first); if(el) el.focus();
-    return;
-  }
-  const rec = {
-    id: "REC" + Date.now(),
-    time: todayStr(),
-    location: currentLocation,
-    inspector: meta.inspector || "",
-    shift: meta.shift || "",
-    weather: meta.weather || "",
-    items: arr.map(x => {
-      const d=draft[keyOf(x.seq)] || {};
-      return {...x, ...d};
-    })
-  };
-  records.unshift(rec);
-  localStorage.setItem("inspectionRecords_v3", JSON.stringify(records));
-  // 清除該巡檢點草稿
-  arr.forEach(x => delete draft[keyOf(x.seq)]);
-  localStorage.setItem("inspectionDraft_v3", JSON.stringify(draft));
-  showToast("✅ 已送出巡檢");
-  renderInspectionItems();
-  renderLocations();
-  updateStats();
-}
-
-function updateStats() {
-  const done = ITEMS.filter(x=>draft[keyOf(x.seq)]?.result).length;
-  const abnDraft = ITEMS.filter(x=>["異常","待注意"].includes(draft[keyOf(x.seq)]?.result)).length;
-  const abnRec = records.reduce((sum,r)=>sum+r.items.filter(i=>["異常","待注意"].includes(i.result)).length,0);
-  $("statLoc").textContent=LOCATIONS.length;
-  $("statDone").textContent=done;
-  $("statAbn").textContent=abnDraft + abnRec;
-  $("statRecords").textContent=records.length;
-}
-
-function renderAbnormal() {
-  const box=$("abnormalList");
-  let rows=[];
-  ITEMS.forEach(x=>{
-    const d=draft[keyOf(x.seq)];
-    if(d && ["異常","待注意"].includes(d.result)) rows.push({source:"草稿", time:d.updatedAt||"", ...x, ...d});
-  });
-  records.forEach(r=>r.items.forEach(i=>{
-    if(["異常","待注意"].includes(i.result)) rows.push({source:"已送出", time:r.time, inspector:r.inspector, shift:r.shift, weather:r.weather, ...i});
-  }));
-  if(!rows.length) { box.innerHTML='<div class="empty">目前沒有異常或待注意項目</div>'; return; }
-  box.innerHTML = rows.map(r=>`
-    <div class="card item-card ${r.result==='異常'?'bad':'warn'}">
-      <div class="item-head">
-        <div>
-          <div class="item-title">${r.location}｜${r.item}</div>
-          <div class="item-meta">${r.category}｜${r.source}｜${r.time||''}</div>
-        </div>
-        <span class="badge ${r.result==='異常'?'red':'orange'}">${r.result}</span>
-      </div>
-      <div class="standard"><b>說明：</b>${escapeHtml(r.note||'未填')}<br><b>處理：</b>${escapeHtml(r.action||'未填')}<br><b>預計完成：</b>${escapeHtml(r.due||'未填')}</div>
-      ${r.photo ? `<img class="photo-preview" src="${r.photo}" style="display:block">` : ''}
-    </div>`).join('');
-}
-
-function renderRecords() {
-  const box=$("recordList");
-  if(!records.length) { box.innerHTML='<div class="empty">尚無送出紀錄</div>'; return; }
-  box.innerHTML = records.map(r=>{
-    const abn=r.items.filter(i=>["異常","待注意"].includes(i.result)).length;
-    const done=r.items.filter(i=>i.result).length;
-    return `<div class="card">
-      <div class="item-head">
-        <div>
-          <div class="item-title">${r.location}</div>
-          <div class="item-meta">${r.time}｜${r.inspector||'未填人員'}｜${r.shift}｜${r.weather}</div>
-        </div>
-        <span class="badge ${abn?'red':'green'}">${abn?abn+'異常':'正常'}</span>
-      </div>
-      <div class="small">完成 ${done} / ${r.items.length} 項</div>
-      <button class="secondary" style="width:100%;margin-top:10px;" onclick="viewRecord('${r.id}')">查看明細</button>
-    </div>`;
-  }).join('');
-}
-
-function viewRecord(id) {
-  const r=records.find(x=>x.id===id);
-  if(!r) return;
-  const detail = r.items.map(i=>`${i.seq}. ${i.item}｜${i.result||'未判定'}${i.note?'｜'+i.note:''}`).join("\n");
-  alert(`${r.location}\n${r.time}\n\n${detail}`);
-}
-
-function exportCSV() {
-  const header=["紀錄ID","時間","巡檢人員","班別","天氣","巡檢點","序號","類別","項目","標準","判定","說明","處理方式","預計完成日","照片檔名"];
-  const lines=[header];
-  records.forEach(r=>r.items.forEach(i=>{
-    lines.push([r.id,r.time,r.inspector,r.shift,r.weather,r.location,i.seq,i.category,i.item,i.standard,i.result||"",i.note||"",i.action||"",i.due||"",i.photoName||""]);
-  }));
-  const csv = lines.map(row => row.map(v => `"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\n");
-  const blob = new Blob(["\ufeff"+csv], {type:"text/csv;charset=utf-8;"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="社區巡檢紀錄_"+new Date().toISOString().slice(0,10)+".csv";
-  document.body.appendChild(a); a.click(); a.remove();
-}
-
-function clearDraft() {
-  if(confirm("確定清除目前未送出的巡檢草稿？")) {
-    draft={}; localStorage.removeItem("inspectionDraft_v3"); renderLocations(); updateStats(); showToast("已清除草稿");
-  }
-}
-
-function clearAllRecords() {
-  if(confirm("確定清除全部歷史紀錄？此動作無法復原。")) {
-    records=[]; localStorage.removeItem("inspectionRecords_v3"); renderRecords(); updateStats(); showToast("已清除紀錄");
-  }
-}
-
-init();
+const locations=['B1庫房','B2庫房','B3庫房','B4庫房','A棟一樓安全梯','泳池','2樓家教室','2樓桌球室','2樓健身房','2樓休息室','14樓中繼水塔','26樓廚房','頂樓水池','B棟一樓安全梯','B棟頂樓','後哨'];
+const common=[['消防安全','滅火器有效期限','有效期限未逾期，壓力表指針在綠色範圍'],['消防安全','消防設備外觀','箱門可正常開啟，水帶完好，閥門無鏽蝕'],['消防安全','緊急照明或出口指示','亮燈正常，無遮蔽物'],['環境衛生','地面清潔','無垃圾、油污、紙屑，走道通暢'],['環境衛生','是否有積水','地面乾燥，無滲水或積水'],['環境衛生','是否有異味','無霉味、臭味、油煙味或排水異味'],['設備設施','照明是否正常','燈具全數正常，無閃爍或不亮'],['保全管控','門禁或鎖具是否正常','門鎖、電子鎖、門弓器功能正常'],['保全管控','CCTV或監視設備是否正常','畫面清晰，角度正確，無遮蔽']];
+const specials={
+'泳池':[['公設管理','水質清澈度','水質清澈無漂浮物，無明顯混濁'],['緊急應變','救生設備','救生圈、救生桿完整且放置明顯'],['公設管理','防滑狀況','池畔地面防滑，無破損隆起'],['設備設施','排水溝','排水順暢，無堵塞或異味'],['公設管理','警示標語','安全告示清楚完整，無脫落']],
+'2樓健身房':[['設備設施','器材安全','器材運作正常，無異音或危險鬆動'],['設備設施','器材螺絲固定','螺絲固定無鬆脫'],['環境衛生','地墊清潔','地墊乾淨無破損，無汗漬異味'],['設備設施','冷氣通風','空調及通風正常'],['公設管理','使用規範公告','使用規範張貼清楚']],
+'2樓桌球室':[['公設管理','桌球桌狀況','桌面平整無破損'],['公設管理','球網固定','球網固定正常，無明顯鬆脫'],['環境衛生','地面防滑','地面乾燥防滑，無障礙物'],['設備設施','照明亮度','照明充足無閃爍']],
+'2樓家教室':[['公設管理','桌椅完整','桌椅無破損，排列整齊'],['環境衛生','白板清潔','白板清潔可使用'],['設備設施','插座安全','插座無鬆脫、焦黑、裸線'],['設備設施','冷氣照明','冷氣及照明正常']],
+'2樓休息室':[['公設管理','沙發桌椅','沙發桌椅完整無破損'],['環境衛生','環境整潔','環境整潔無垃圾'],['設備設施','空調照明','空調與照明正常'],['公設管理','公共用品','公共用品整齊無短缺']],
+'14樓中繼水塔':[['水池水塔','水塔外觀','外觀完整無鏽蝕破損'],['水池水塔','水位狀況','水位正常無異常警報'],['機電設備','加壓馬達','馬達運轉正常，無異音'],['設備設施','管線滲漏','管線無滲漏'],['保全管控','機房門鎖','門鎖正常，非授權不可進入']],
+'26樓廚房':[['廚房衛生','冰箱溫度','冷藏冷凍溫度正常'],['廚房衛生','食材保存','食材分類保存並覆蓋標示'],['廚房衛生','油水分離槽','油水分離槽清潔無溢流'],['廚房衛生','排水溝','排水溝清潔無菜渣油垢'],['廚房衛生','抽油煙機','抽油煙機濾網無厚重油垢'],['消防安全','瓦斯安全','瓦斯管線與開關無異常'],['廚房衛生','調味料封存','調味料封好或冷藏'],['廚房衛生','廚房地面清潔','地面無油垢菜渣積水']],
+'頂樓水池':[['水池水塔','水池蓋密合','水池蓋密合上鎖'],['水池水塔','水池周邊清潔','周邊無垃圾落葉積水'],['緊急應變','防墜安全','護欄與防墜設施完整'],['設備設施','管線滲漏','管線無滲漏'],['水池水塔','水位狀況','水位正常']],
+'B棟頂樓':[['設備設施','排水孔','排水孔暢通無堵塞'],['設備設施','防水層','防水層無破損隆起'],['設備設施','女兒牆','女兒牆無裂縫或剝落'],['保全管控','門鎖','頂樓門鎖正常'],['環境衛生','雜物堆置','無雜物堆置或危險物品']],
+'後哨':[['保全管控','門禁紀錄','門禁紀錄完整'],['保全管控','訪客登記','訪客登記完整'],['保全管控','CCTV畫面','CCTV畫面清晰'],['緊急應變','緊急聯絡表','最新版緊急聯絡表張貼'],['緊急應變','值班日誌','值班日誌完整無空白'],['環境衛生','哨所清潔','哨所整潔無食物殘留']]
+};
+function getItems(loc){let arr=[...common]; if(loc.includes('安全梯'))arr=arr.concat([['消防安全','通道是否暢通','樓梯及平台無雜物阻礙'],['消防安全','防火門是否關閉','防火門保持關閉且功能正常'],['消防安全','樓梯扶手','扶手穩固無鬆動'],['環境衛生','是否堆放雜物','無私人雜物堆置']]); if(specials[loc])arr=arr.concat(specials[loc]); return arr.map((x,i)=>({id:loc+'_'+i,loc,category:x[0],item:x[1],standard:x[2]}));}
+const allItems=locations.flatMap(getItems); let currentLoc=''; let state=JSON.parse(localStorage.getItem('inspectionState')||'{}'); let records=JSON.parse(localStorage.getItem('inspectionRecords')||'[]');
+function save(){localStorage.setItem('inspectionState',JSON.stringify(state));localStorage.setItem('inspectionRecords',JSON.stringify(records));updateStats();}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1800)}
+function showPage(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));if(id==='locations')document.getElementById('tabLocations').classList.add('active');if(id==='abnormal'){document.getElementById('tabAbnormal').classList.add('active');renderAbnormal()}if(id==='records'){document.getElementById('tabRecords').classList.add('active');renderRecords()}document.getElementById('submitBar').classList.toggle('show',id==='inspection');}
+function renderLocations(){const grid=document.getElementById('locationGrid');grid.innerHTML='';locations.forEach(loc=>{const items=getItems(loc);const done=items.filter(it=>state[it.id]?.result).length;const bad=items.filter(it=>state[it.id]?.result==='異常').length;const card=document.createElement('div');card.className='loc-card '+(done===items.length?'done':'');card.onclick=()=>openLoc(loc);card.innerHTML=`<div class="loc-title">${loc}</div><div class="loc-small">${done}/${items.length} 已完成｜異常 ${bad}</div><span class="loc-badge">點擊開始巡檢</span>`;grid.appendChild(card)});}
+function openLoc(loc){currentLoc=loc;document.getElementById('currentLocationTitle').textContent=loc;renderItems();showPage('inspection');}
+function renderItems(){const list=document.getElementById('itemList');list.innerHTML='';getItems(currentLoc).forEach(it=>{const s=state[it.id]||{};const cls=s.result==='正常'?'normal':s.result==='待注意'?'watch':s.result==='異常'?'bad':s.result==='不適用'?'na':'';const card=document.createElement('div');card.className='item-card '+cls;card.innerHTML=`<span class="cat">${it.category}</span><div class="item-title">${it.item}</div><div class="standard">標準：${it.standard}</div><div class="judge"><button class="${s.result==='正常'?'sel normal':''}" onclick="setResult('${it.id}','正常')">正常</button><button class="${s.result==='待注意'?'sel watch':''}" onclick="setResult('${it.id}','待注意')">待注意</button><button class="${s.result==='異常'?'sel bad':''}" onclick="setResult('${it.id}','異常')">異常</button><button class="${s.result==='不適用'?'sel na':''}" onclick="setResult('${it.id}','不適用')">N/A</button></div><div class="detail ${s.result==='異常'||s.result==='待注意'?'show':''}"><div class="field"><label>異常/備註說明</label><textarea oninput="setField('${it.id}','note',this.value)" placeholder="請描述狀況">${s.note||''}</textarea></div><div class="field"><label>處理方式</label><textarea oninput="setField('${it.id}','action',this.value)" placeholder="請填寫處理方式或交辦單位">${s.action||''}</textarea></div><div class="field"><label>預計完成日</label><input type="date" value="${s.due||''}" onchange="setField('${it.id}','due',this.value)"></div><div class="field"><label>拍照上傳 / 選擇照片</label><input type="file" accept="image/*" capture="environment" multiple onchange="handlePhotos('${it.id}',this.files)"><div class="photo-preview" id="photo_${safeId(it.id)}">${(s.photos||[]).map(src=>`<img src="${src}">`).join('')}</div></div></div>`;list.appendChild(card)});document.getElementById('submitHint').textContent=`目前巡檢點：${currentLoc}`;}
+function safeId(id){return id.replace(/[^a-zA-Z0-9]/g,'_')}
+function setResult(id,result){state[id]=state[id]||{};state[id].result=result;state[id].time=new Date().toISOString();save();renderItems();renderLocations();}
+function setField(id,key,val){state[id]=state[id]||{};state[id][key]=val;save();}
+function handlePhotos(id,files){state[id]=state[id]||{};state[id].photos=state[id].photos||[];[...files].slice(0,3).forEach(file=>{const r=new FileReader();r.onload=e=>{state[id].photos.push(e.target.result);save();renderItems();};r.readAsDataURL(file);});}
+function submitInspection(){if(!currentLoc){toast('請先選擇巡檢點');return}const items=getItems(currentLoc);const unfinished=items.filter(it=>!state[it.id]?.result);const badMissing=items.filter(it=>state[it.id]?.result==='異常'&&(!state[it.id]?.note||!state[it.id]?.action));if(unfinished.length){if(!confirm(`尚有 ${unfinished.length} 項未判定，仍要送出嗎？`))return;}if(badMissing.length){toast('異常項目請填寫說明與處理方式');return}const now=new Date();const rec={id:'REC-'+now.getTime(),date:now.toLocaleDateString('zh-TW'),time:now.toLocaleTimeString('zh-TW'),community:document.getElementById('community').value||'',inspector:document.getElementById('inspector').value||'',shift:document.getElementById('shift').value,weather:document.getElementById('weather').value||'',location:currentLoc,items:items.map(it=>({...it,...(state[it.id]||{})}))};records.unshift(rec);save();toast('✅ 巡檢已送出並儲存在本機');renderLocations();showPage('locations');}
+function updateStats(){const done=allItems.filter(it=>state[it.id]?.result).length;const bad=allItems.filter(it=>state[it.id]?.result==='異常').length;document.getElementById('stTotal').textContent=allItems.length;document.getElementById('stDone').textContent=done;document.getElementById('stBad').textContent=bad;document.getElementById('stPct').textContent=Math.round(done/allItems.length*100)+'%';}
+function renderAbnormal(){const box=document.getElementById('abnormalList');const bad=allItems.filter(it=>['異常','待注意'].includes(state[it.id]?.result));if(!bad.length){box.innerHTML='<div class="empty">目前沒有異常或待注意項目</div>';return}box.innerHTML=bad.map(it=>{const s=state[it.id];return `<div class="abnormal"><b>${it.loc}｜${it.item}</b><br><span>${s.result}</span><p>${s.note||'未填說明'}</p><p>處理：${s.action||'未填'}</p>${(s.photos||[]).map(src=>`<img src="${src}" style="width:72px;height:72px;object-fit:cover;border-radius:10px;margin-right:6px">`).join('')}</div>`}).join('');}
+function renderRecords(){const box=document.getElementById('recordList');if(!records.length){box.innerHTML='<div class="empty">尚無送出紀錄</div>';return}box.innerHTML=records.map(r=>`<div class="record"><b>${r.location}</b><br>${r.date} ${r.time}<br>人員：${r.inspector||'未填'}｜班別：${r.shift}<br>異常：${r.items.filter(x=>x.result==='異常').length} 項</div>`).join('')}
+function exportCSV(){let rows=[['紀錄ID','日期','時間','社區','人員','班別','天氣','巡檢點','類別','項目','標準','判定','說明','處理方式','預計完成日','照片數']];records.forEach(r=>r.items.forEach(x=>rows.push([r.id,r.date,r.time,r.community,r.inspector,r.shift,r.weather,r.location,x.category,x.item,x.standard,x.result||'',x.note||'',x.action||'',x.due||'',(x.photos||[]).length])));let csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='社區巡檢紀錄.csv';a.click();}
+function clearAll(){if(confirm('確定清除本機暫存與紀錄？')){localStorage.removeItem('inspectionState');localStorage.removeItem('inspectionRecords');state={};records=[];renderLocations();renderRecords();updateStats();toast('已清除')}}
+renderLocations();updateStats();
 </script>
 </body>
 </html>
