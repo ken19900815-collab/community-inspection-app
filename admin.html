@@ -4,59 +4,144 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>主管巡檢後台</title>
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;margin:0;background:#f5f7fb;color:#172033}
-header{background:#102c58;color:#fff;padding:18px} main{padding:16px;max-width:1100px;margin:auto}
-.card{background:#fff;border:1px solid #e6eaf2;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 8px 24px rgba(15,23,42,.08)}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#f8fafc;border-radius:14px;padding:12px}.stat b{font-size:24px;display:block}
-button{border:0;border-radius:12px;padding:11px 14px;font-weight:800;background:#2563eb;color:#fff}
-table{width:100%;border-collapse:collapse;background:#fff}td,th{border-bottom:1px solid #e6eaf2;padding:9px;text-align:left;vertical-align:top;font-size:14px}
-.bad{color:#dc2626;font-weight:900}.warn{color:#b45309;font-weight:900}.thumb{width:70px;height:70px;object-fit:cover;border-radius:10px;margin:3px}
-@media(max-width:700px){.grid{grid-template-columns:repeat(2,1fr)} table{font-size:12px}}
+:root{--blue:#123a74;--ink:#172033;--muted:#64748b;--line:#e6eaf2;--bg:#f5f7fb;--bad:#dc2626;--warn:#b45309;--ok:#16a34a}
+*{box-sizing:border-box} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#0b1f45,#123a74);color:#fff;padding:22px 18px} header h1{margin:0 0 6px;font-size:30px} header div{opacity:.9}
+main{padding:16px;max-width:1180px;margin:auto}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 8px 24px rgba(15,23,42,.08)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.toolbar input,.toolbar select{border:1px solid #cbd5e1;border-radius:12px;padding:11px 12px;font-size:15px;background:white;min-height:44px}button{border:0;border-radius:12px;padding:11px 14px;font-weight:900;background:#2563eb;color:#fff;min-height:44px}button.secondary{background:#0f172a}button.green{background:#16a34a}button.gray{background:#64748b}button.danger{background:#dc2626}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#f8fafc;border-radius:14px;padding:12px}.stat b{font-size:26px;display:block;margin-top:4px}.muted{color:var(--muted);font-size:14px}.recordHead{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start}.recordActions{display:flex;gap:8px;flex-wrap:wrap}table{width:100%;border-collapse:collapse;background:#fff}td,th{border-bottom:1px solid var(--line);padding:9px;text-align:left;vertical-align:top;font-size:14px}th{background:#f8fafc}.bad{color:var(--bad);font-weight:900}.warn{color:var(--warn);font-weight:900}.ok{color:var(--ok);font-weight:900}.na{color:#64748b;font-weight:900}.thumb{width:74px;height:74px;object-fit:cover;border-radius:10px;margin:3px;border:1px solid #e2e8f0}.badge{display:inline-block;padding:4px 9px;border-radius:999px;background:#eef2ff;font-weight:800;font-size:12px;margin:2px}.badge.badbg{background:#fee2e2;color:#991b1b}.badge.warnbg{background:#fef3c7;color:#92400e}.hidden{display:none}.error{background:#fff1f2;color:#9f1239;border:1px solid #fecdd3}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}.recordHead{display:block}.recordActions button{width:100%}.toolbar input,.toolbar select,.toolbar button{width:100%} table{font-size:12px;display:block;overflow-x:auto;white-space:nowrap}}
 </style>
 </head>
 <body>
-<header><h1>主管巡檢後台</h1><div>雲端紀錄、異常追蹤、照片查閱、CSV/PDF</div></header>
+<header><h1>主管巡檢後台</h1><div>雲端紀錄、異常追蹤、照片查閱、完整巡檢報告、CSV / PDF</div></header>
 <main>
-<div class="card"><button onclick="loadRecords()">重新整理</button> <button onclick="exportCSV()">匯出CSV</button> <button onclick="window.print()">列印 / 另存PDF</button></div>
-<div class="card grid">
-<div class="stat">總紀錄<b id="totalRecords">0</b></div>
-<div class="stat">總項目<b id="totalItems">0</b></div>
-<div class="stat">異常<b id="totalBad">0</b></div>
-<div class="stat">待注意<b id="totalWarn">0</b></div>
-</div>
-<div id="records"></div>
+  <div class="card toolbar">
+    <button onclick="loadRecords()">重新整理</button>
+    <button onclick="exportCSV()">匯出 CSV（全部完整明細）</button>
+    <button class="green" onclick="printAllReports()">產生完整 PDF 報告（全部）</button>
+    <input id="keyword" placeholder="搜尋人員 / 點位 / 項目 / 異常內容" oninput="render()">
+    <select id="resultFilter" onchange="render()">
+      <option value="">全部結果</option>
+      <option value="異常">只看異常</option>
+      <option value="待注意">只看待注意</option>
+      <option value="正常">只看正常</option>
+      <option value="N/A">只看 N/A</option>
+    </select>
+  </div>
+  <div class="card grid">
+    <div class="stat">總紀錄<b id="totalRecords">0</b></div>
+    <div class="stat">總項目<b id="totalItems">0</b></div>
+    <div class="stat">異常<b id="totalBad">0</b></div>
+    <div class="stat">待注意<b id="totalWarn">0</b></div>
+  </div>
+  <div id="records"></div>
 </main>
 <script>
 let records=[];
-function esc(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
+function safeDate(d){try{return d?new Date(d).toLocaleString("zh-TW",{hour12:false}):""}catch(e){return String(d||"")}}
+function resultClass(r){return r==="異常"?"bad":r==="待注意"?"warn":r==="正常"?"ok":"na"}
+function resultBadge(r){return r==="異常"?"badbg":r==="待注意"?"warnbg":""}
+function getMeta(r){return r.meta||{};}
+function itemText(i){return [i.location,i.category,i.item,i.standard,i.answer?.result,i.answer?.note,i.answer?.abnormal,i.answer?.action].join(" ");}
 async function loadRecords(){
- const res=await fetch("/api/getRecords");
- if(!res.ok){document.getElementById("records").innerHTML='<div class="card">讀取失敗：'+esc(await res.text())+'</div>';return;}
- records=await res.json();
- render();
+ const box=document.getElementById("records"); box.innerHTML='<div class="card">讀取中...</div>';
+ try{
+   const res=await fetch("/api/getRecords?ts="+Date.now(),{cache:"no-store"});
+   if(!res.ok){box.innerHTML='<div class="card error">讀取失敗：'+esc(await res.text())+'</div>';return;}
+   records=await res.json();
+   render();
+ }catch(e){box.innerHTML='<div class="card error">讀取失敗：'+esc(e.message||e)+'</div>';}
+}
+function filteredRecords(){
+ const kw=document.getElementById("keyword").value.trim().toLowerCase();
+ const rf=document.getElementById("resultFilter").value;
+ return records.map(r=>{
+   let items=(r.items||[]).filter(i=>!rf || i.answer?.result===rf);
+   if(kw){
+    const meta=getMeta(r);
+    const metaStr=[meta.inspector,meta.shift,meta.weather,r.lineProfile?.displayName,r.submittedAt].join(" ").toLowerCase();
+    items=items.filter(i=>metaStr.includes(kw)||itemText(i).toLowerCase().includes(kw));
+   }
+   return {...r, _viewItems:items};
+ }).filter(r=>(r._viewItems||[]).length || (!kw && !rf));
 }
 function render(){
  let totalItems=0,bad=0,warn=0;
- records.forEach(r=>r.items?.forEach(i=>{totalItems++; if(i.answer?.result==="異常")bad++; if(i.answer?.result==="待注意")warn++;}));
+ records.forEach(r=>(r.items||[]).forEach(i=>{totalItems++; if(i.answer?.result==="異常")bad++; if(i.answer?.result==="待注意")warn++;}));
  document.getElementById("totalRecords").textContent=records.length;
  document.getElementById("totalItems").textContent=totalItems;
  document.getElementById("totalBad").textContent=bad;
  document.getElementById("totalWarn").textContent=warn;
- document.getElementById("records").innerHTML=records.map(r=>{
-   const issues=(r.items||[]).filter(i=>["異常","待注意"].includes(i.answer?.result));
-   return `<div class="card"><h2>${esc(r.meta?.inspector||"未填姓名")}｜${new Date(r.submittedAt).toLocaleString()}</h2>
-   <div>班別：${esc(r.meta?.shift)}｜天氣：${esc(r.meta?.weather)}｜異常/待注意：${issues.length}</div>
-   <table><thead><tr><th>巡檢點</th><th>項目</th><th>結果</th><th>說明/處理</th><th>照片</th></tr></thead><tbody>
-   ${issues.map(i=>`<tr><td>${esc(i.location)}</td><td>${esc(i.category)}<br><b>${esc(i.item)}</b></td><td class="${i.answer.result==="異常"?"bad":"warn"}">${esc(i.answer.result)}</td><td>${esc(i.answer.abnormal||i.answer.note)}<br>${esc(i.answer.action||"")}</td><td>${(i.answer.photos||[]).map(p=>`<a href="${p.url||p.preview}" target="_blank"><img class="thumb" src="${p.url||p.preview}"></a>`).join("")}</td></tr>`).join("")}
-   </tbody></table></div>`;
- }).join("") || '<div class="card">目前沒有紀錄。</div>';
+ const view=filteredRecords();
+ document.getElementById("records").innerHTML=view.map((r,idx)=>renderRecordCard(r,idx)).join("") || '<div class="card">目前沒有符合條件的紀錄。</div>';
 }
+function renderRecordCard(r,idx){
+ const meta=getMeta(r); const allItems=r.items||[]; const issues=allItems.filter(i=>["異常","待注意"].includes(i.answer?.result));
+ const items=r._viewItems || allItems;
+ const normal=allItems.filter(i=>i.answer?.result==="正常").length;
+ const na=allItems.filter(i=>i.answer?.result==="N/A").length;
+ const bad=allItems.filter(i=>i.answer?.result==="異常").length;
+ const warn=allItems.filter(i=>i.answer?.result==="待注意").length;
+ return `<div class="card">
+   <div class="recordHead">
+     <div><h2 style="margin:0 0 8px">${esc(meta.inspector||r.lineProfile?.displayName||"未填姓名")}｜${safeDate(r.submittedAt)}</h2>
+       <div class="muted">班別：${esc(meta.shift)}｜天氣：${esc(meta.weather)}｜總項目：${allItems.length}</div>
+       <div style="margin-top:7px"><span class="badge">正常 ${normal}</span><span class="badge warnbg">待注意 ${warn}</span><span class="badge badbg">異常 ${bad}</span><span class="badge">N/A ${na}</span></div>
+     </div>
+     <div class="recordActions"><button class="green" onclick="printOneReport(${records.indexOf(r)})">本筆完整 PDF</button><button class="secondary" onclick="toggleDetail('detail-${idx}')">畫面展開完整明細</button></div>
+   </div>
+   <div style="margin-top:14px"><b>異常 / 待注意摘要</b></div>
+   ${issues.length?renderItemsTable(issues,true):'<div class="muted" style="padding:10px 0">本筆無異常或待注意。</div>'}
+   <div id="detail-${idx}" class="hidden" style="margin-top:16px"><b>完整巡檢明細</b>${renderItemsTable(items,false)}</div>
+ </div>`;
+}
+function photoHtml(photos,printMode=false){
+ return (photos||[]).map(p=>{
+   const url=p.url||p.preview||""; if(!url)return "";
+   return `<a href="${esc(url)}" target="_blank"><img class="thumb" src="${esc(url)}" ${printMode?'crossorigin="anonymous"':''}></a>`;
+ }).join("");
+}
+function renderItemsTable(items,summaryOnly){
+ return `<table><thead><tr><th style="width:14%">巡檢點</th><th style="width:20%">項目</th><th style="width:9%">結果</th><th>標準 / 說明 / 處理</th><th style="width:20%">照片</th></tr></thead><tbody>
+ ${items.map(i=>`<tr><td>${esc(i.location)}</td><td><span class="badge">${esc(i.category)}</span><br><b>${esc(i.item)}</b></td><td class="${resultClass(i.answer?.result)}">${esc(i.answer?.result||"未填")}</td><td><div class="muted">標準：${esc(i.standard)}</div>${i.answer?.note?`<div>備註：${esc(i.answer.note)}</div>`:""}${i.answer?.abnormal?`<div class="bad">異常：${esc(i.answer.abnormal)}</div>`:""}${i.answer?.action?`<div>處理：${esc(i.answer.action)}</div>`:""}${i.answer?.dueDate?`<div>預計完成：${esc(i.answer.dueDate)}</div>`:""}</td><td>${photoHtml(i.answer?.photos)}</td></tr>`).join("")}
+ </tbody></table>`;
+}
+function toggleDetail(id){document.getElementById(id)?.classList.toggle("hidden");}
 function exportCSV(){
- const rows=[["送出時間","巡檢人員","班別","天氣","巡檢點","類別","項目","結果","備註","異常說明","處理方式","照片"]];
- records.forEach(r=>(r.items||[]).forEach(i=>rows.push([r.submittedAt,r.meta?.inspector,r.meta?.shift,r.meta?.weather,i.location,i.category,i.item,i.answer?.result,i.answer?.note,i.answer?.abnormal,i.answer?.action,(i.answer?.photos||[]).map(p=>p.url).join(" ")])));
+ const rows=[["送出時間","巡檢人員","班別","天氣","LINE名稱","巡檢點","類別","項目","檢查標準","結果","備註","異常說明","處理方式","預計完成日","照片連結"]];
+ records.forEach(r=>{const meta=getMeta(r);(r.items||[]).forEach(i=>rows.push([r.submittedAt,meta.inspector,meta.shift,meta.weather,r.lineProfile?.displayName,i.location,i.category,i.item,i.standard,i.answer?.result,i.answer?.note,i.answer?.abnormal,i.answer?.action,i.answer?.dueDate,(i.answer?.photos||[]).map(p=>p.url||p.preview).join(" ")]))});
  const csv=rows.map(row=>row.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\n");
- const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"});
- const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="inspection_records.csv";a.click();
+ const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="inspection_full_records.csv";a.click();
+}
+function printOneReport(index){ const r=records[index]; if(!r){alert("找不到紀錄");return;} openReportWindow([r],`巡檢完整報告_${getMeta(r).inspector||"未填"}_${(r.submittedAt||"").slice(0,10)}`); }
+function printAllReports(){ if(!records.length){alert("目前沒有紀錄");return;} openReportWindow(records,"全部巡檢完整報告"); }
+function counts(r){const c={normal:0,warn:0,bad:0,na:0,total:(r.items||[]).length};(r.items||[]).forEach(i=>{if(i.answer?.result==="正常")c.normal++;else if(i.answer?.result==="待注意")c.warn++;else if(i.answer?.result==="異常")c.bad++;else if(i.answer?.result==="N/A")c.na++;});return c;}
+function groupByLocation(items){const m={};items.forEach(i=>{(m[i.location]||(m[i.location]=[])).push(i)});return m;}
+function openReportWindow(recs,title){
+ const html=buildReportHtml(recs,title);
+ const w=window.open("","_blank");
+ if(!w){alert("瀏覽器封鎖了新視窗，請允許彈出視窗後再按一次。");return;}
+ w.document.open(); w.document.write(html); w.document.close();
+ setTimeout(()=>{try{w.focus(); w.print();}catch(e){}},1200);
+}
+function buildReportHtml(recs,title){
+ const sections=recs.map((r,ri)=>{
+  const meta=getMeta(r); const c=counts(r); const groups=groupByLocation(r.items||[]);
+  return `<section class="report ${ri>0?'pageBreak':''}">
+   <div class="reportTitle"><h1>社區巡檢完整紀錄報告</h1><div>送出時間：${safeDate(r.submittedAt)}</div></div>
+   <table class="info"><tr><th>巡檢人員</th><td>${esc(meta.inspector||r.lineProfile?.displayName||"未填")}</td><th>班別</th><td>${esc(meta.shift)}</td></tr><tr><th>天氣</th><td>${esc(meta.weather)}</td><th>LINE帳號</th><td>${esc(r.lineProfile?.displayName||"")}</td></tr><tr><th>紀錄ID</th><td colspan="3">${esc(r.id||"")}</td></tr></table>
+   <div class="summary"><div>總項目<br><b>${c.total}</b></div><div>正常<br><b class="ok">${c.normal}</b></div><div>待注意<br><b class="warn">${c.warn}</b></div><div>異常<br><b class="bad">${c.bad}</b></div><div>N/A<br><b>${c.na}</b></div></div>
+   ${Object.entries(groups).map(([loc,items])=>`<h2 class="loc">${esc(loc)}</h2>${reportTable(items)}`).join("")}
+   <div class="sign"><div>巡檢人員簽名：</div><div>主管複核：</div><div>複核日期：</div></div>
+  </section>`;
+ }).join("");
+ return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><style>
+  @page{size:A4;margin:10mm} body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",Arial,sans-serif;color:#111827;margin:0;background:#fff;font-size:12px} .report{padding:8mm}.pageBreak{page-break-before:always}.reportTitle{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #1e3a8a;padding-bottom:8px;margin-bottom:10px}.reportTitle h1{margin:0;font-size:22px;color:#1e3a8a}.info{width:100%;border-collapse:collapse;margin:8px 0 10px}.info th{background:#eff6ff;width:14%}.info th,.info td{border:1px solid #cbd5e1;padding:6px;text-align:left}.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:10px 0}.summary div{border:1px solid #cbd5e1;background:#f8fafc;border-radius:8px;padding:7px;text-align:center}.summary b{font-size:18px}.loc{font-size:17px;background:#eef2ff;padding:7px 9px;border-left:5px solid #2563eb;margin:14px 0 6px}table.detail{width:100%;border-collapse:collapse;page-break-inside:auto}table.detail th,table.detail td{border:1px solid #cbd5e1;padding:5px;vertical-align:top;text-align:left}table.detail th{background:#f1f5f9}.bad{color:#dc2626;font-weight:900}.warn{color:#b45309;font-weight:900}.ok{color:#16a34a;font-weight:900}.muted{color:#64748b}.photo{width:105px;height:105px;object-fit:cover;border:1px solid #cbd5e1;border-radius:4px;margin:2px}.sign{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:24px}.sign div{border-top:1px solid #111;padding-top:8px;min-height:35px}.noPrint{position:sticky;top:0;background:#fff;padding:8px;border-bottom:1px solid #ddd}.noPrint button{padding:8px 12px;border:0;background:#2563eb;color:white;border-radius:8px;font-weight:bold}@media print{.noPrint{display:none}.report{padding:0}.photo{max-width:95px;max-height:95px}}
+  </style></head><body><div class="noPrint"><button onclick="window.print()">列印 / 另存 PDF</button> <span>這是完整巡檢紀錄報告，不是後台畫面截圖。</span></div>${sections}</body></html>`;
+}
+function reportTable(items){
+ return `<table class="detail"><thead><tr><th style="width:34px">序</th><th style="width:90px">類別</th><th style="width:150px">項目</th><th>檢查標準 / 說明</th><th style="width:62px">結果</th><th style="width:230px">照片</th></tr></thead><tbody>${items.map(i=>`<tr><td>${esc(i.seq||"")}</td><td>${esc(i.category)}</td><td><b>${esc(i.item)}</b></td><td><div class="muted">標準：${esc(i.standard)}</div>${i.answer?.note?`<div>備註：${esc(i.answer.note)}</div>`:""}${i.answer?.abnormal?`<div class="bad">異常：${esc(i.answer.abnormal)}</div>`:""}${i.answer?.action?`<div>處理方式：${esc(i.answer.action)}</div>`:""}${i.answer?.dueDate?`<div>預計完成：${esc(i.answer.dueDate)}</div>`:""}</td><td class="${resultClass(i.answer?.result)}">${esc(i.answer?.result||"未填")}</td><td>${(i.answer?.photos||[]).map(p=>{const url=p.url||p.preview||"";return url?`<img class="photo" src="${esc(url)}">`:""}).join("")}</td></tr>`).join("")}</tbody></table>`;
 }
 loadRecords();
 </script>
