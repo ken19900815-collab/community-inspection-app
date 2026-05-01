@@ -5,394 +5,75 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>主管巡檢後台</title>
   <style>
-    :root{
-      --navy:#0f2746;--blue:#2457d6;--green:#16a34a;--orange:#f59e0b;--red:#dc2626;
-      --bg:#f3f6fb;--card:#fff;--muted:#64748b;--line:#dbe3ef;--text:#111827;
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif}
-    header{background:linear-gradient(135deg,#0f2746,#5b2339);color:white;padding:28px 22px}
-    header h1{margin:0 0 8px;font-size:30px}
-    header p{margin:0;color:#dbeafe;font-weight:700}
-    main{max-width:1180px;margin:auto;padding:20px}
-    .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;box-shadow:0 12px 30px rgba(15,39,70,.08);margin-bottom:16px}
-    .toolbar{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    button,.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:900;font-size:15px;cursor:pointer}
-    .blue{background:var(--blue);color:white}.green{background:var(--green);color:white}.dark{background:#1f2937;color:white}.light{background:#eef2ff;color:#1e3a8a}
-    input,select{border:1px solid #cbd5e1;border-radius:14px;padding:13px 14px;font-size:15px;background:white;min-width:210px}
-    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-    .stat{background:#f8fafc;border-radius:18px;padding:18px}
-    .stat .label{color:var(--muted);font-weight:800}
-    .stat .num{font-size:34px;font-weight:1000;margin-top:8px}
-    .notice{border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;padding:14px;border-radius:14px;font-weight:800;white-space:pre-wrap}
-    .okmsg{border:1px solid #bbf7d0;background:#f0fdf4;color:#166534;padding:14px;border-radius:14px;font-weight:800;white-space:pre-wrap}
-    .record{background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:16px}
-    .rec-head{display:flex;gap:14px;justify-content:space-between;align-items:flex-start}
-    .rec-title{font-size:22px;font-weight:1000;margin-bottom:8px}.rec-meta{color:var(--muted);font-weight:800}
-    .rec-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-    .badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-    .badge{display:inline-block;border-radius:999px;padding:4px 9px;font-weight:900;font-size:12px}
-    .b-ok{background:#dcfce7;color:#166534}.b-att{background:#fef3c7;color:#92400e}.b-bad{background:#fee2e2;color:#991b1b}.b-na{background:#e2e8f0;color:#334155}
-    .summary{margin-top:14px;background:#f8fafc;border-radius:14px;padding:12px;color:#475569;font-weight:700}
-    .details{display:none;margin-top:14px;overflow:auto}
-    table{width:100%;border-collapse:collapse;font-size:13px}
-    th,td{border-bottom:1px solid #e5e7eb;text-align:left;vertical-align:top;padding:10px}
-    th{background:#f8fafc;color:#334155;white-space:nowrap}
-    .photo{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #cbd5e1;margin:3px}
-    .empty{text-align:center;color:#64748b;font-weight:900;font-size:20px;padding:30px}
-    .small{font-size:12px;color:#64748b;margin-top:8px}
-    @media(max-width:760px){header h1{font-size:26px}.stats{grid-template-columns:repeat(2,1fr)}.rec-head{display:block}.rec-actions{justify-content:flex-start;margin-top:12px}input,select,button{width:100%}.toolbar{display:grid;grid-template-columns:1fr}.stat .num{font-size:30px}}
-    @media print{.no-print,header,.toolbar,.stats,#message{display:none!important}main{max-width:none;padding:0}.card,.record{box-shadow:none;border:0}}
+    :root{--navy:#0f1a2f;--blue:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#d97706;--muted:#64748b;--bg:#f3f6fb;--card:#fff;--line:#dbe3ef}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',Arial,sans-serif;color:#111827;font-size:16px}
+    header{background:linear-gradient(135deg,#102b55,#193b78 55%,#111827);color:#fff;padding:26px 18px 24px;position:sticky;top:0;z-index:10;box-shadow:0 8px 20px rgba(15,23,42,.15)}
+    header h1{font-size:30px;margin:0 0 8px;font-weight:900} header p{margin:0;color:#dbeafe;font-size:15px}
+    main{max-width:1100px;margin:0 auto;padding:18px 14px 80px}.panel,.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;box-shadow:0 6px 20px rgba(15,23,42,.06);padding:16px;margin:14px 0}.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:900;font-size:16px;color:#fff;background:var(--blue);cursor:pointer;min-height:48px}.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.dark{background:#1f2937}.btn.gray{background:#64748b}.btn:active{transform:scale(.99)} input,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;background:#fff;min-height:48px}.toolbar input{flex:1 1 280px}.toolbar select{flex:0 1 190px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#f8fafc;border-radius:18px;padding:16px}.stat label{display:block;color:var(--muted);font-weight:800;margin-bottom:8px}.stat b{font-size:34px}.notice{padding:14px;border-radius:16px;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;font-weight:700}.record h2{font-size:28px;margin:4px 0 8px;line-height:1.2}.meta{font-size:18px;color:#64748b;font-weight:800;margin-bottom:10px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.chip{border-radius:999px;padding:7px 12px;font-weight:900}.normal{background:#dcfce7;color:#166534}.attn{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}.na{background:#e2e8f0;color:#334155}.summary{background:#f8fafc;border-radius:16px;padding:12px;margin:12px 0;color:#475569;font-weight:700}.details{display:none;margin-top:14px;overflow:auto}.details.open{display:block}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}.table th{background:#f8fafc;font-weight:900}.photos{display:flex;gap:8px;flex-wrap:wrap}.photos img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}.empty{text-align:center;color:#64748b;font-size:22px;font-weight:800;padding:30px}.actions{display:flex;gap:10px;flex-wrap:wrap}.small{font-size:13px;color:#64748b}.hide-print{} @media(max-width:700px){header h1{font-size:24px}.stats{grid-template-columns:repeat(2,1fr)}.record h2{font-size:26px}.meta{font-size:17px}.btn{width:100%}.toolbar .btn{width:auto}.toolbar input,.toolbar select{flex:1 1 100%}.actions .btn{width:100%}} @media print{body{background:#fff}header,.panel,.hide-print{display:none!important}.card{box-shadow:none;border:0;break-inside:avoid}main{max-width:none;padding:0}.details{display:block!important}.table{min-width:0;font-size:12px}.photos img{width:90px;height:90px}.btn{display:none!important}}
   </style>
 </head>
 <body>
-<header>
-  <h1>主管巡檢後台</h1>
-  <p>雲端紀錄、異常追蹤、照片查閱、CSV / 完整 PDF 報告</p>
-</header>
-
+<header><h1>主管巡檢後台</h1><p>雲端紀錄、異常追蹤、照片查閱、完整報告、紀錄刪除</p></header>
 <main>
-  <section class="card no-print">
+  <section class="panel hide-print">
     <div class="toolbar">
-      <button class="blue" onclick="loadRecords()">重新整理</button>
-      <button class="green" onclick="exportCSV()">匯出 CSV</button>
-      <button class="dark" onclick="printAllReport()">產生完整 PDF 報告（全部）</button>
-      <input id="q" placeholder="搜尋巡檢人員 / 點位 / 項目" oninput="render()" />
-      <select id="filter" onchange="render()">
-        <option value="all">全部狀態</option>
-        <option value="abnormal">只看異常</option>
-        <option value="attention">只看待注意</option>
-        <option value="normal">只看全數正常</option>
-      </select>
+      <button class="btn" onclick="loadRecords()">重新整理</button>
+      <button class="btn green" onclick="exportCSV()">匯出 CSV</button>
+      <button class="btn dark" onclick="printFilteredReport()">產生完整 PDF 報告（全部）</button>
+      <input id="search" placeholder="搜尋巡檢人員 / 點位 / 項目 / 異常" oninput="render()" />
+      <select id="filter" onchange="render()"><option value="all">全部狀態</option><option value="abnormal">有異常</option><option value="attention">有待注意</option><option value="normal">全正常</option></select>
     </div>
-    <div class="small">單次巡檢請按每筆右側的「本筆完整 PDF」。此功能會直接產生該筆資料的列印頁，不會列印後台畫面。</div>
+    <p class="small">若要移除測試資料，可按每筆右側「刪除紀錄」。刪除後會同步移除雲端紀錄檔。</p>
   </section>
-
-  <section class="card stats no-print">
-    <div class="stat"><div class="label">總紀錄</div><div id="statRecords" class="num">0</div></div>
-    <div class="stat"><div class="label">總項目</div><div id="statItems" class="num">0</div></div>
-    <div class="stat"><div class="label">異常</div><div id="statAbnormal" class="num">0</div></div>
-    <div class="stat"><div class="label">待注意</div><div id="statAttention" class="num">0</div></div>
+  <section class="panel stats hide-print">
+    <div class="stat"><label>總紀錄</label><b id="statRecords">0</b></div>
+    <div class="stat"><label>總項目</label><b id="statItems">0</b></div>
+    <div class="stat"><label>異常</label><b id="statBad">0</b></div>
+    <div class="stat"><label>待注意</label><b id="statAttn">0</b></div>
   </section>
-
-  <div id="message" class="no-print"></div>
-  <section id="records"></section>
+  <section id="message" class="panel notice hide-print" style="display:none"></section>
+  <section id="list"></section>
 </main>
-
 <script>
-(function(){
-  "use strict";
-
-  const API = "/api/getRecords";
-  let allRecords = [];
-  let shownRecords = [];
-
-  function byId(id){ return document.getElementById(id); }
-
-  function esc(v){
-    return String(v ?? "").replace(/[&<>"']/g, function(m){
-      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m];
-    });
-  }
-
-  function arr(v){ return Array.isArray(v) ? v : []; }
-
-  function first(obj, keys, fallback){
-    if (!obj || typeof obj !== "object") return fallback ?? "";
-    for (const k of keys){
-      if (obj[k] !== undefined && obj[k] !== null && obj[k] !== "") return obj[k];
-    }
-    return fallback ?? "";
-  }
-
-  function statusOf(item){ return first(item, ["status","result","value","判定結果","結果"], ""); }
-  function itemName(item){ return first(item, ["item","itemName","name","點檢項目","項目"], ""); }
-  function locName(item){ return first(item, ["location","locationName","巡檢點","點位"], ""); }
-  function catName(item){ return first(item, ["category","類別"], ""); }
-  function standardOf(item){ return first(item, ["standard","requirement","標準","檢查標準"], ""); }
-  function noteOf(item){ return first(item, ["note","remark","備註"], ""); }
-  function abnormalOf(item){ return first(item, ["abnormalDescription","abnormalNote","issue","異常說明"], ""); }
-  function actionOf(item){ return first(item, ["action","process","handling","處理方式","處理結果"], ""); }
-
-  function photosOf(item){
-    const p = first(item, ["photos","photoUrls","photoURLs","images","照片"], []);
-    if (Array.isArray(p)) return p.filter(Boolean);
-    if (typeof p === "string" && p.trim()) return p.split(/[\s,，\n]+/).filter(Boolean);
-    return [];
-  }
-
-  function formatDate(v){
-    if (!v) return "";
-    try { return new Date(v).toLocaleString("zh-TW", {hour12:false}); }
-    catch(e){ return String(v); }
-  }
-
-  function normalizeRecord(raw){
-    const r = raw && typeof raw === "object" ? raw : {};
-    const items = arr(r.items).map(x => (x && typeof x === "object") ? x : {});
-    const normal = items.filter(i => statusOf(i) === "正常").length;
-    const attention = items.filter(i => statusOf(i) === "待注意").length;
-    const abnormal = items.filter(i => statusOf(i) === "異常").length;
-    const na = items.filter(i => statusOf(i) === "N/A" || statusOf(i) === "不適用").length;
-
-    return {
-      ...r,
-      items,
-      normalCount: Number(r.normalCount ?? normal),
-      attentionCount: Number(r.attentionCount ?? attention),
-      abnormalCount: Number(r.abnormalCount ?? abnormal),
-      naCount: Number(r.naCount ?? na),
-      totalItems: Number(r.totalItems ?? items.length)
-    };
-  }
-
-  function extractRecords(data){
-    if (Array.isArray(data)) return data;
-    if (data && Array.isArray(data.records)) return data.records;
-    if (data && Array.isArray(data.data)) return data.data;
-    if (data && Array.isArray(data.items)) return data.items;
-    return [];
-  }
-
-  function showMessage(text, type){
-    if (!text){ byId("message").innerHTML = ""; return; }
-    const cls = type === "ok" ? "okmsg" : "notice";
-    byId("message").innerHTML = `<div class="${cls}">${esc(text)}</div>`;
-  }
-
-  async function loadRecords(){
-    showMessage("讀取中...", "ok");
-    try{
-      const res = await fetch(API, {cache:"no-store"});
-      const text = await res.text();
-      if (!res.ok) throw new Error("API 狀態 " + res.status + "： " + text.slice(0,300));
-      let data;
-      try { data = text ? JSON.parse(text) : []; }
-      catch(parseErr){ throw new Error("API 回傳不是 JSON： " + text.slice(0,300)); }
-
-      allRecords = extractRecords(data).map(normalizeRecord);
-      allRecords.sort((a,b)=> new Date(b.submittedAt || b.createdAt || 0) - new Date(a.submittedAt || a.createdAt || 0));
-      showMessage("", "ok");
-      render();
-    }catch(e){
-      allRecords = [];
-      render();
-      showMessage("讀取失敗：" + (e && e.message ? e.message : String(e)), "err");
-    }
-  }
-
-  function filtered(){
-    const q = String(byId("q").value || "").toLowerCase();
-    const f = byId("filter").value;
-    return allRecords.filter(r => {
-      const text = JSON.stringify(r).toLowerCase();
-      const okQ = !q || text.includes(q);
-      const okF =
-        f === "all" ||
-        (f === "abnormal" && r.abnormalCount > 0) ||
-        (f === "attention" && r.attentionCount > 0) ||
-        (f === "normal" && r.abnormalCount === 0 && r.attentionCount === 0);
-      return okQ && okF;
-    });
-  }
-
-  function statusClass(st){
-    if (st === "異常") return "b-bad";
-    if (st === "待注意") return "b-att";
-    if (st === "N/A" || st === "不適用") return "b-na";
-    return "b-ok";
-  }
-
-  function render(){
-    shownRecords = filtered();
-
-    const totalItems = shownRecords.reduce((s,r)=>s + (Number(r.totalItems)||0), 0);
-    const totalAb = shownRecords.reduce((s,r)=>s + (Number(r.abnormalCount)||0), 0);
-    const totalAt = shownRecords.reduce((s,r)=>s + (Number(r.attentionCount)||0), 0);
-
-    byId("statRecords").textContent = shownRecords.length;
-    byId("statItems").textContent = totalItems;
-    byId("statAbnormal").textContent = totalAb;
-    byId("statAttention").textContent = totalAt;
-
-    const box = byId("records");
-    if (!shownRecords.length){
-      box.innerHTML = '<div class="card empty">沒有符合條件的紀錄</div>';
-      return;
-    }
-
-    box.innerHTML = shownRecords.map(recordHtml).join("");
-  }
-
-  function recordHtml(r, i){
-    const time = r.submittedAt || r.createdAt || "";
-    const name = r.lineDisplayName || r.inspector || "未填人員";
-    const items = arr(r.items);
-
-    const rows = items.map((it, idx) => {
-      const st = statusOf(it);
-      const ph = photosOf(it).map(u => `<a href="${esc(u)}" target="_blank" rel="noopener"><img class="photo" src="${esc(u)}" alt="照片"></a>`).join("");
-      return `<tr>
-        <td>${idx+1}</td>
-        <td>${esc(locName(it))}</td>
-        <td>${esc(catName(it))}</td>
-        <td>${esc(itemName(it))}</td>
-        <td><span class="badge ${statusClass(st)}">${esc(st || "未填")}</span></td>
-        <td>
-          <b>標準：</b>${esc(standardOf(it))}<br>
-          <b>備註：</b>${esc(noteOf(it))}<br>
-          <b>異常說明：</b>${esc(abnormalOf(it))}<br>
-          <b>處理方式：</b>${esc(actionOf(it))}
-        </td>
-        <td>${ph}</td>
-      </tr>`;
-    }).join("");
-
-    const abnormalSummary = items
-      .filter(it => statusOf(it) === "異常" || statusOf(it) === "待注意")
-      .map(it => `${locName(it)}｜${itemName(it)}｜${statusOf(it)}｜${abnormalOf(it) || noteOf(it) || "未填說明"}`)
-      .join("<br>");
-
-    return `<article class="record">
-      <div class="rec-head">
-        <div>
-          <div class="rec-title">${esc(name)}｜${esc(formatDate(time))}</div>
-          <div class="rec-meta">班別：${esc(r.shift || "")}｜天氣：${esc(r.weather || "")}｜總項目：${esc(r.totalItems)}</div>
-          <div class="badges">
-            <span class="badge b-ok">正常 ${esc(r.normalCount)}</span>
-            <span class="badge b-att">待注意 ${esc(r.attentionCount)}</span>
-            <span class="badge b-bad">異常 ${esc(r.abnormalCount)}</span>
-            <span class="badge b-na">N/A ${esc(r.naCount)}</span>
-          </div>
-        </div>
-        <div class="rec-actions no-print">
-          <button class="green" onclick="window.printOneReport(${i})">本筆完整 PDF</button>
-          <button class="dark" onclick="window.toggleDetails(${i})">畫面展開完整明細</button>
-        </div>
-      </div>
-      <div class="summary"><b>異常 / 待注意摘要</b><br>${abnormalSummary || "本筆無異常或待注意。"}</div>
-      <div class="details" id="details-${i}">
-        <h3>完整巡檢明細</h3>
-        <table>
-          <thead><tr><th>#</th><th>巡檢點</th><th>類別</th><th>項目</th><th>結果</th><th>標準 / 說明 / 處理</th><th>照片</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-    </article>`;
-  }
-
-  window.toggleDetails = function(i){
-    const el = byId("details-" + i);
-    if (!el) return;
-    el.style.display = el.style.display === "block" ? "none" : "block";
-  };
-
-  function csvEscape(v){
-    return '"' + String(v ?? "").replace(/"/g,'""') + '"';
-  }
-
-  window.exportCSV = function(){
-    if (!shownRecords.length){ alert("沒有可匯出的紀錄"); return; }
-    const rows = [["巡檢人員","送出時間","班別","天氣","巡檢點","類別","項目","標準","結果","備註","異常說明","處理方式","照片"]];
-    shownRecords.forEach(r => arr(r.items).forEach(it => {
-      rows.push([
-        r.lineDisplayName || r.inspector || "",
-        formatDate(r.submittedAt || r.createdAt),
-        r.shift || "",
-        r.weather || "",
-        locName(it),
-        catName(it),
-        itemName(it),
-        standardOf(it),
-        statusOf(it),
-        noteOf(it),
-        abnormalOf(it),
-        actionOf(it),
-        photosOf(it).join(" ")
-      ]);
-    }));
-    const csv = "\ufeff" + rows.map(r => r.map(csvEscape).join(",")).join("\n");
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8"});
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "巡檢完整紀錄.csv";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(a.href);
-  };
-
-  function reportDocument(records, title){
-    const sections = records.map(r => {
-      const items = arr(r.items);
-      const rows = items.map((it,idx) => {
-        const st = statusOf(it);
-        const ph = photosOf(it).map(u => `<img class="photo" src="${esc(u)}" alt="照片">`).join("");
-        return `<tr>
-          <td>${idx+1}</td>
-          <td>${esc(locName(it))}</td>
-          <td>${esc(catName(it))}</td>
-          <td>${esc(itemName(it))}</td>
-          <td><span class="badge ${statusClass(st)}">${esc(st || "未填")}</span></td>
-          <td>
-            <b>標準：</b>${esc(standardOf(it))}<br>
-            <b>備註：</b>${esc(noteOf(it))}<br>
-            <b>異常說明：</b>${esc(abnormalOf(it))}<br>
-            <b>處理方式：</b>${esc(actionOf(it))}
-          </td>
-          <td>${ph}</td>
-        </tr>`;
-      }).join("");
-
-      return `<section class="rec">
-        <h2>${esc(r.lineDisplayName || r.inspector || "未填人員")}｜${esc(formatDate(r.submittedAt || r.createdAt))}</h2>
-        <div class="meta">班別：${esc(r.shift || "")}｜天氣：${esc(r.weather || "")}｜總項目：${esc(r.totalItems)}｜正常 ${esc(r.normalCount)}｜待注意 ${esc(r.attentionCount)}｜異常 ${esc(r.abnormalCount)}｜N/A ${esc(r.naCount)}</div>
-        <table>
-          <thead><tr><th>#</th><th>巡檢點</th><th>類別</th><th>項目</th><th>結果</th><th>標準 / 說明 / 處理</th><th>照片</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-        <div class="sign"><div>巡檢人員簽名：</div><div>主管複核簽名：</div></div>
-      </section>`;
-    }).join("");
-
-    return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
-      <style>
-        body{font-family:-apple-system,BlinkMacSystemFont,"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;color:#111827;padding:24px}
-        h1{font-size:28px;margin:0 0 18px} h2{border-bottom:2px solid #0f2746;padding-bottom:8px;margin-top:28px}
-        .meta{color:#475569;font-weight:700;margin:10px 0}
-        .badge{border-radius:999px;padding:3px 8px;font-weight:900;font-size:12px;display:inline-block}
-        .b-ok{background:#dcfce7;color:#166534}.b-att{background:#fef3c7;color:#92400e}.b-bad{background:#fee2e2;color:#991b1b}.b-na{background:#e2e8f0;color:#334155}
-        table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12px}
-        th,td{border:1px solid #cbd5e1;padding:7px;text-align:left;vertical-align:top} th{background:#f1f5f9}
-        .photo{width:90px;height:90px;object-fit:cover;margin:3px;border:1px solid #cbd5e1;border-radius:6px}
-        .sign{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:34px}.sign div{border-top:1px solid #111;padding-top:8px}
-        @media print{.rec{page-break-after:always}.rec:last-child{page-break-after:auto}}
-      </style></head><body><h1>${esc(title)}</h1>${sections}<script>setTimeout(function(){window.print()},800)<\/script></body></html>`;
-  }
-
-  function openReport(records, title){
-    if (!records.length){ alert("找不到紀錄"); return; }
-    const w = window.open("", "_blank");
-    if (!w){ alert("瀏覽器阻擋新視窗，請允許彈出視窗後再試。"); return; }
-    w.document.open();
-    w.document.write(reportDocument(records, title));
-    w.document.close();
-  }
-
-  window.printOneReport = function(i){
-    const r = shownRecords[i];
-    openReport(r ? [r] : [], "社區巡檢完整報告");
-  };
-
-  window.printAllReport = function(){
-    openReport(shownRecords, "社區巡檢完整報告（全部）");
-  };
-
-  window.loadRecords = loadRecords;
-  window.render = render;
-
-  loadRecords();
-})();
+let allRecords=[]; let currentRecords=[];
+const API_GET='/api/getRecords'; const API_DELETE='/api/deleteRecord';
+function val(obj,...keys){ for(const k of keys){ if(!obj) continue; if(obj[k]!==undefined && obj[k]!==null && String(obj[k]).trim()!=='') return obj[k]; } return ''; }
+function arr(v){ return Array.isArray(v)?v:[]; }
+function esc(s){ return String(s??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m])); }
+function normResult(s){ s=String(s||'').trim(); if(['正常','normal','OK','ok'].includes(s)) return '正常'; if(['待注意','注意','attention'].includes(s)) return '待注意'; if(['異常','abnormal','NG','ng'].includes(s)) return '異常'; if(['N/A','NA','n/a','na','不適用'].includes(s)) return 'N/A'; return s||'未填'; }
+function getItems(r){ return arr(val(r,'items','records','details','明細','巡檢明細')).map((it,i)=>({
+  no:i+1,
+  location:val(it,'location','locationName','巡檢點','point','place'),
+  category:val(it,'category','類別'),
+  item:val(it,'item','itemName','點檢項目','項目','name'),
+  standard:val(it,'standard','檢查標準','標準'),
+  result:normResult(val(it,'result','status','判定結果','結果','value')),
+  note:val(it,'note','remark','備註','待注意說明'),
+  abnormal:val(it,'abnormalNote','abnormalDescription','異常說明','異常描述','description'),
+  action:val(it,'action','handling','process','處理方式','處理結果','改善方式'),
+  due:val(it,'dueDate','預計完成日','deadline'),
+  photos:arr(val(it,'photos','photoUrls','照片','images'))
+})); }
+function countBy(items,type){ return items.filter(x=>x.result===type).length; }
+function inspectorOf(r){ return val(r,'inspector','inspectorName','lineDisplayName','displayName','staffName','userName','name','巡檢人員','人員') || '未填人員'; }
+function shiftOf(r){ return val(r,'shift','班別') || ''; }
+function weatherOf(r){ return val(r,'weather','天氣') || ''; }
+function timeOf(r){ return val(r,'submittedAt','createdAt','time','送出時間','巡檢時間') || ''; }
+function recordIdOf(r){ return val(r,'id','recordId','紀錄ID','_id'); }
+function msg(text){ const el=document.getElementById('message'); el.style.display=text?'block':'none'; el.textContent=text||''; }
+async function loadRecords(){ msg('讀取中...'); try{ const res=await fetch(API_GET+'?t='+Date.now()); const data=await res.json(); allRecords=Array.isArray(data)?data:(data.records||data.data||data.items||[]); allRecords=allRecords.map((r,i)=>({...r,__idx:i,__items:getItems(r)})); msg(''); render(); }catch(e){ allRecords=[]; render(); msg('讀取失敗：'+(e.message||e)); }}
+function filtered(){ const q=document.getElementById('search').value.trim().toLowerCase(); const f=document.getElementById('filter').value; return allRecords.filter(r=>{ const items=r.__items||getItems(r); const text=[inspectorOf(r),shiftOf(r),weatherOf(r),timeOf(r),...items.flatMap(i=>[i.location,i.category,i.item,i.standard,i.result,i.note,i.abnormal,i.action])].join(' ').toLowerCase(); if(q && !text.includes(q)) return false; const bad=countBy(items,'異常'), att=countBy(items,'待注意'); if(f==='abnormal') return bad>0; if(f==='attention') return att>0; if(f==='normal') return bad===0 && att===0; return true; }); }
+function render(){ currentRecords=filtered(); let total=0,bad=0,attn=0; currentRecords.forEach(r=>{const items=r.__items||[]; total+=items.length; bad+=countBy(items,'異常'); attn+=countBy(items,'待注意');}); document.getElementById('statRecords').textContent=currentRecords.length; document.getElementById('statItems').textContent=total; document.getElementById('statBad').textContent=bad; document.getElementById('statAttn').textContent=attn; const list=document.getElementById('list'); if(!currentRecords.length){list.innerHTML='<div class="card empty">沒有符合條件的紀錄</div>';return;} list.innerHTML=currentRecords.map((r,idx)=>recordHTML(r,idx)).join(''); }
+function recordHTML(r,idx){ const items=r.__items||[]; const normal=countBy(items,'正常'), att=countBy(items,'待注意'), bad=countBy(items,'異常'), na=countBy(items,'N/A'); const time=timeOf(r); const summary=items.filter(i=>i.result==='異常'||i.result==='待注意').map(i=>`${i.location}｜${i.item}：${i.result}${i.abnormal?('，'+i.abnormal):''}${i.note?('，'+i.note):''}`).join('<br>') || '本筆無異常或待注意。'; return `<article class="card record" id="rec-${idx}"><h2>${esc(inspectorOf(r))}｜${esc(formatTime(time))}</h2><div class="meta">班別：${esc(shiftOf(r))}｜天氣：${esc(weatherOf(r))}｜總項目：${items.length}</div><div class="chips"><span class="chip normal">正常 ${normal}</span><span class="chip attn">待注意 ${att}</span><span class="chip bad">異常 ${bad}</span><span class="chip na">N/A ${na}</span></div><div class="actions hide-print"><button class="btn green" onclick="printOne(${idx})">本筆完整 PDF</button><button class="btn dark" onclick="toggleDetails(${idx})">畫面展開完整明細</button><button class="btn red" onclick="deleteRecord(${idx})">刪除紀錄</button></div><div class="summary"><b>異常 / 待注意摘要</b><br>${summary}</div><div class="details" id="details-${idx}">${tableHTML(items)}</div></article>`; }
+function tableHTML(items){ return `<table class="table"><thead><tr><th>#</th><th>巡檢點</th><th>類別</th><th>項目</th><th>結果</th><th>標準 / 說明 / 處理</th><th>照片</th></tr></thead><tbody>${items.map(i=>`<tr><td>${i.no}</td><td>${esc(i.location)}</td><td>${esc(i.category)}</td><td>${esc(i.item)}</td><td>${resultChip(i.result)}</td><td><b>標準：</b>${esc(i.standard)}<br><b>備註：</b>${esc(i.note)}<br><b>異常：</b>${esc(i.abnormal)}<br><b>處理：</b>${esc(i.action)}${i.due?`<br><b>預計：</b>${esc(i.due)}`:''}</td><td><div class="photos">${i.photos.map(p=>`<a href="${esc(p)}" target="_blank"><img src="${esc(p)}"></a>`).join('')}</div></td></tr>`).join('')}</tbody></table>`; }
+function resultChip(r){ const cls=r==='正常'?'normal':r==='待注意'?'attn':r==='異常'?'bad':'na'; return `<span class="chip ${cls}">${esc(r)}</span>`; }
+function toggleDetails(i){ document.getElementById('details-'+i)?.classList.toggle('open'); }
+function formatTime(t){ if(!t) return ''; const d=new Date(t); return isNaN(d)?t:d.toLocaleString('zh-TW',{hour12:false}); }
+async function deleteRecord(idx){ const r=currentRecords[idx]; const id=recordIdOf(r); if(!id){ alert('這筆紀錄沒有 ID，無法刪除。'); return; } if(!confirm(`確定刪除這筆紀錄？\n${inspectorOf(r)}｜${formatTime(timeOf(r))}`)) return; try{ const res=await fetch(API_DELETE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false) throw new Error(data.detail||data.error||'刪除失敗'); alert('已刪除紀錄'); await loadRecords(); }catch(e){ alert('刪除失敗：'+(e.message||e)); }}
+function exportCSV(){ const rows=[['巡檢人員','班別','天氣','送出時間','巡檢點','類別','項目','結果','標準','備註','異常說明','處理方式','照片']]; currentRecords.forEach(r=>{(r.__items||[]).forEach(i=>rows.push([inspectorOf(r),shiftOf(r),weatherOf(r),formatTime(timeOf(r)),i.location,i.category,i.item,i.result,i.standard,i.note,i.abnormal,i.action,i.photos.join(' ')]));}); const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='巡檢完整明細.csv'; a.click(); }
+function reportHTML(records,title='巡檢完整報告'){ return `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC',Arial,sans-serif;color:#111827}h1{font-size:26px}.rec{break-inside:avoid;margin:0 0 24px;padding:0 0 16px;border-bottom:2px solid #ddd}.meta{color:#555;margin:8px 0}.chip{display:inline-block;border-radius:999px;padding:4px 8px;margin-right:6px;font-weight:800}.normal{background:#dcfce7;color:#166534}.attn{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}.na{background:#e2e8f0;color:#334155}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #ddd;padding:6px;vertical-align:top}th{background:#f3f4f6}.photos img{width:72px;height:72px;object-fit:cover;margin:2px}.sign{display:flex;gap:40px;margin-top:24px}.sign div{flex:1;border-top:1px solid #222;padding-top:8px}</style></head><body><h1>${title}</h1>${records.map((r)=>{const items=r.__items||[];return `<section class="rec"><h2>${esc(inspectorOf(r))}｜${esc(formatTime(timeOf(r)))}</h2><div class="meta">班別：${esc(shiftOf(r))}｜天氣：${esc(weatherOf(r))}｜總項目：${items.length}</div><div><span class="chip normal">正常 ${countBy(items,'正常')}</span><span class="chip attn">待注意 ${countBy(items,'待注意')}</span><span class="chip bad">異常 ${countBy(items,'異常')}</span><span class="chip na">N/A ${countBy(items,'N/A')}</span></div>${tableHTML(items)}<div class="sign"><div>巡檢人員簽名：</div><div>主管複核簽名：</div></div></section>`}).join('')}</body></html>`; }
+function printOne(idx){ const w=window.open('','_blank'); w.document.open(); w.document.write(reportHTML([currentRecords[idx]],'本筆巡檢完整報告')); w.document.close(); setTimeout(()=>w.print(),500); }
+function printFilteredReport(){ if(!currentRecords.length){alert('找不到紀錄');return;} const w=window.open('','_blank'); w.document.open(); w.document.write(reportHTML(currentRecords,'巡檢完整報告（全部）')); w.document.close(); setTimeout(()=>w.print(),500); }
+loadRecords();
 </script>
-</body>
-</html>
+</body></html>
