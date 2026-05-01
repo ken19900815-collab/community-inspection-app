@@ -1,79 +1,61 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>主管巡檢後台</title>
-  <style>
-    :root{--navy:#0f1a2f;--blue:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#d97706;--muted:#64748b;--bg:#f3f6fb;--card:#fff;--line:#dbe3ef}
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans TC',Arial,sans-serif;color:#111827;font-size:16px}
-    header{background:linear-gradient(135deg,#102b55,#193b78 55%,#111827);color:#fff;padding:26px 18px 24px;position:sticky;top:0;z-index:10;box-shadow:0 8px 20px rgba(15,23,42,.15)}
-    header h1{font-size:30px;margin:0 0 8px;font-weight:900} header p{margin:0;color:#dbeafe;font-size:15px}
-    main{max-width:1100px;margin:0 auto;padding:18px 14px 80px}.panel,.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:22px;box-shadow:0 6px 20px rgba(15,23,42,.06);padding:16px;margin:14px 0}.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:900;font-size:16px;color:#fff;background:var(--blue);cursor:pointer;min-height:48px}.btn.green{background:var(--green)}.btn.red{background:var(--red)}.btn.dark{background:#1f2937}.btn.gray{background:#64748b}.btn:active{transform:scale(.99)} input,select{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px 14px;font-size:16px;background:#fff;min-height:48px}.toolbar input{flex:1 1 280px}.toolbar select{flex:0 1 190px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#f8fafc;border-radius:18px;padding:16px}.stat label{display:block;color:var(--muted);font-weight:800;margin-bottom:8px}.stat b{font-size:34px}.notice{padding:14px;border-radius:16px;border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;font-weight:700}.record h2{font-size:28px;margin:4px 0 8px;line-height:1.2}.meta{font-size:18px;color:#64748b;font-weight:800;margin-bottom:10px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.chip{border-radius:999px;padding:7px 12px;font-weight:900}.normal{background:#dcfce7;color:#166534}.attn{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}.na{background:#e2e8f0;color:#334155}.summary{background:#f8fafc;border-radius:16px;padding:12px;margin:12px 0;color:#475569;font-weight:700}.details{display:none;margin-top:14px;overflow:auto}.details.open{display:block}.table{width:100%;border-collapse:collapse;min-width:850px}.table th,.table td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top}.table th{background:#f8fafc;font-weight:900}.photos{display:flex;gap:8px;flex-wrap:wrap}.photos img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}.empty{text-align:center;color:#64748b;font-size:22px;font-weight:800;padding:30px}.actions{display:flex;gap:10px;flex-wrap:wrap}.small{font-size:13px;color:#64748b}.hide-print{} @media(max-width:700px){header h1{font-size:24px}.stats{grid-template-columns:repeat(2,1fr)}.record h2{font-size:26px}.meta{font-size:17px}.btn{width:100%}.toolbar .btn{width:auto}.toolbar input,.toolbar select{flex:1 1 100%}.actions .btn{width:100%}} @media print{body{background:#fff}header,.panel,.hide-print{display:none!important}.card{box-shadow:none;border:0;break-inside:avoid}main{max-width:none;padding:0}.details{display:block!important}.table{min-width:0;font-size:12px}.photos img{width:90px;height:90px}.btn{display:none!important}}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>主管巡檢後台</title>
+<style>
+  :root{--navy:#111827;--blue:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#d97706;--gray:#64748b;--bg:#f1f5f9;--card:#fff;--line:#e2e8f0;}
+  *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC','Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--navy)}
+  header{background:linear-gradient(135deg,#0f172a,#1d4ed8);color:white;padding:28px 18px} header h1{margin:0 0 8px;font-size:28px} header p{margin:0;opacity:.9}
+  main{max-width:1100px;margin:auto;padding:16px}.panel,.card{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:0 8px 20px rgba(15,23,42,.06);padding:16px;margin:14px 0}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}button{border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:15px;cursor:pointer}.b-blue{background:var(--blue);color:#fff}.b-green{background:var(--green);color:#fff}.b-dark{background:#1f2937;color:white}.b-red{background:var(--red);color:white}.b-gray{background:#e5e7eb;color:#111827}
+  input,select{border:1px solid #cbd5e1;border-radius:12px;padding:12px;font-size:15px;background:#fff;min-width:210px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#f8fafc;border-radius:16px;padding:16px}.stat b{display:block;font-size:30px;margin-top:6px}
+  .record-title{font-size:24px;font-weight:900}.muted{color:var(--gray)}.badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}.badge{border-radius:999px;padding:6px 12px;font-weight:800}.ok{background:#dcfce7;color:#166534}.att{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}.na{background:#e2e8f0;color:#334155}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.summary{background:#f8fafc;border-radius:16px;padding:14px;margin:10px 0}.details{display:none;margin-top:12px}.details.open{display:block}.item{border-top:1px solid var(--line);padding:10px 0}.photos{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.photos img{width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+  .notice{padding:12px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin:12px 0}.empty{text-align:center;color:var(--gray);font-size:20px;padding:30px}.debug{font-size:12px;background:#0f172a;color:#e5e7eb;padding:10px;border-radius:10px;white-space:pre-wrap;overflow:auto;display:none}
+  @media(max-width:700px){.stats{grid-template-columns:repeat(2,1fr)} input,select{width:100%}.toolbar{display:grid;grid-template-columns:1fr}.toolbar button{width:100%} .record-title{font-size:22px}.actions button{width:100%}}
+  @media print{body{background:white}.no-print{display:none!important}.card,.panel{box-shadow:none;border:0}.details{display:block!important} header{background:white;color:black}.print-page{page-break-after:always}.photos img{width:120px;height:120px}}
+</style>
 </head>
 <body>
-<header><h1>主管巡檢後台</h1><p>雲端紀錄、異常追蹤、照片查閱、完整報告、紀錄刪除</p></header>
+<header><h1>主管巡檢後台</h1><p>雲端紀錄、異常追蹤、照片查閱、完整 PDF / CSV、真刪除雲端紀錄</p></header>
 <main>
-  <section class="panel hide-print">
+  <section class="panel no-print">
     <div class="toolbar">
-      <button class="btn" onclick="loadRecords()">重新整理</button>
-      <button class="btn green" onclick="exportCSV()">匯出 CSV</button>
-      <button class="btn dark" onclick="printFilteredReport()">產生完整 PDF 報告（全部）</button>
-      <input id="search" placeholder="搜尋巡檢人員 / 點位 / 項目 / 異常" oninput="render()" />
-      <select id="filter" onchange="render()"><option value="all">全部狀態</option><option value="abnormal">有異常</option><option value="attention">有待注意</option><option value="normal">全正常</option></select>
+      <button class="b-blue" onclick="loadRecords(true)">重新整理</button>
+      <button class="b-green" onclick="exportCSV()">匯出 CSV</button>
+      <button class="b-dark" onclick="printAll()">產生完整 PDF 報告（全部）</button>
+      <input id="search" placeholder="搜尋巡檢人員 / 點位 / 項目" oninput="render()" />
+      <select id="filter" onchange="render()"><option value="all">全部狀態</option><option value="abnormal">只看異常</option><option value="attention">只看待注意</option></select>
     </div>
-    <p class="small">若要移除測試資料，可按每筆右側「刪除紀錄」。刪除後會同步移除雲端紀錄檔。</p>
+    <div id="msg" class="notice" style="display:none"></div>
+    <div id="debug" class="debug"></div>
   </section>
-  <section class="panel stats hide-print">
-    <div class="stat"><label>總紀錄</label><b id="statRecords">0</b></div>
-    <div class="stat"><label>總項目</label><b id="statItems">0</b></div>
-    <div class="stat"><label>異常</label><b id="statBad">0</b></div>
-    <div class="stat"><label>待注意</label><b id="statAttn">0</b></div>
-  </section>
-  <section id="message" class="panel notice hide-print" style="display:none"></section>
+  <section class="panel"><div class="stats"><div class="stat">總紀錄<b id="sRecords">0</b></div><div class="stat">總項目<b id="sItems">0</b></div><div class="stat">異常<b id="sAbnormal">0</b></div><div class="stat">待注意<b id="sAttention">0</b></div></div></section>
   <section id="list"></section>
 </main>
 <script>
-let allRecords=[]; let currentRecords=[];
-const API_GET='/api/getRecords'; const API_DELETE='/api/deleteRecord';
-function val(obj,...keys){ for(const k of keys){ if(!obj) continue; if(obj[k]!==undefined && obj[k]!==null && String(obj[k]).trim()!=='') return obj[k]; } return ''; }
-function arr(v){ return Array.isArray(v)?v:[]; }
-function esc(s){ return String(s??'').replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m])); }
-function normResult(s){ s=String(s||'').trim(); if(['正常','normal','OK','ok'].includes(s)) return '正常'; if(['待注意','注意','attention'].includes(s)) return '待注意'; if(['異常','abnormal','NG','ng'].includes(s)) return '異常'; if(['N/A','NA','n/a','na','不適用'].includes(s)) return 'N/A'; return s||'未填'; }
-function getItems(r){ return arr(val(r,'items','records','details','明細','巡檢明細')).map((it,i)=>({
-  no:i+1,
-  location:val(it,'location','locationName','巡檢點','point','place'),
-  category:val(it,'category','類別'),
-  item:val(it,'item','itemName','點檢項目','項目','name'),
-  standard:val(it,'standard','檢查標準','標準'),
-  result:normResult(val(it,'result','status','判定結果','結果','value')),
-  note:val(it,'note','remark','備註','待注意說明'),
-  abnormal:val(it,'abnormalNote','abnormalDescription','異常說明','異常描述','description'),
-  action:val(it,'action','handling','process','處理方式','處理結果','改善方式'),
-  due:val(it,'dueDate','預計完成日','deadline'),
-  photos:arr(val(it,'photos','photoUrls','照片','images'))
-})); }
-function countBy(items,type){ return items.filter(x=>x.result===type).length; }
-function inspectorOf(r){ return val(r,'inspector','inspectorName','lineDisplayName','displayName','staffName','userName','name','巡檢人員','人員') || '未填人員'; }
-function shiftOf(r){ return val(r,'shift','班別') || ''; }
-function weatherOf(r){ return val(r,'weather','天氣') || ''; }
-function timeOf(r){ return val(r,'submittedAt','createdAt','time','送出時間','巡檢時間') || ''; }
-function recordIdOf(r){ return val(r,'id','recordId','紀錄ID','_id'); }
-function msg(text){ const el=document.getElementById('message'); el.style.display=text?'block':'none'; el.textContent=text||''; }
-async function loadRecords(){ msg('讀取中...'); try{ const res=await fetch(API_GET+'?t='+Date.now()); const data=await res.json(); allRecords=Array.isArray(data)?data:(data.records||data.data||data.items||[]); allRecords=allRecords.map((r,i)=>({...r,__idx:i,__items:getItems(r)})); msg(''); render(); }catch(e){ allRecords=[]; render(); msg('讀取失敗：'+(e.message||e)); }}
-function filtered(){ const q=document.getElementById('search').value.trim().toLowerCase(); const f=document.getElementById('filter').value; return allRecords.filter(r=>{ const items=r.__items||getItems(r); const text=[inspectorOf(r),shiftOf(r),weatherOf(r),timeOf(r),...items.flatMap(i=>[i.location,i.category,i.item,i.standard,i.result,i.note,i.abnormal,i.action])].join(' ').toLowerCase(); if(q && !text.includes(q)) return false; const bad=countBy(items,'異常'), att=countBy(items,'待注意'); if(f==='abnormal') return bad>0; if(f==='attention') return att>0; if(f==='normal') return bad===0 && att===0; return true; }); }
-function render(){ currentRecords=filtered(); let total=0,bad=0,attn=0; currentRecords.forEach(r=>{const items=r.__items||[]; total+=items.length; bad+=countBy(items,'異常'); attn+=countBy(items,'待注意');}); document.getElementById('statRecords').textContent=currentRecords.length; document.getElementById('statItems').textContent=total; document.getElementById('statBad').textContent=bad; document.getElementById('statAttn').textContent=attn; const list=document.getElementById('list'); if(!currentRecords.length){list.innerHTML='<div class="card empty">沒有符合條件的紀錄</div>';return;} list.innerHTML=currentRecords.map((r,idx)=>recordHTML(r,idx)).join(''); }
-function recordHTML(r,idx){ const items=r.__items||[]; const normal=countBy(items,'正常'), att=countBy(items,'待注意'), bad=countBy(items,'異常'), na=countBy(items,'N/A'); const time=timeOf(r); const summary=items.filter(i=>i.result==='異常'||i.result==='待注意').map(i=>`${i.location}｜${i.item}：${i.result}${i.abnormal?('，'+i.abnormal):''}${i.note?('，'+i.note):''}`).join('<br>') || '本筆無異常或待注意。'; return `<article class="card record" id="rec-${idx}"><h2>${esc(inspectorOf(r))}｜${esc(formatTime(time))}</h2><div class="meta">班別：${esc(shiftOf(r))}｜天氣：${esc(weatherOf(r))}｜總項目：${items.length}</div><div class="chips"><span class="chip normal">正常 ${normal}</span><span class="chip attn">待注意 ${att}</span><span class="chip bad">異常 ${bad}</span><span class="chip na">N/A ${na}</span></div><div class="actions hide-print"><button class="btn green" onclick="printOne(${idx})">本筆完整 PDF</button><button class="btn dark" onclick="toggleDetails(${idx})">畫面展開完整明細</button><button class="btn red" onclick="deleteRecord(${idx})">刪除紀錄</button></div><div class="summary"><b>異常 / 待注意摘要</b><br>${summary}</div><div class="details" id="details-${idx}">${tableHTML(items)}</div></article>`; }
-function tableHTML(items){ return `<table class="table"><thead><tr><th>#</th><th>巡檢點</th><th>類別</th><th>項目</th><th>結果</th><th>標準 / 說明 / 處理</th><th>照片</th></tr></thead><tbody>${items.map(i=>`<tr><td>${i.no}</td><td>${esc(i.location)}</td><td>${esc(i.category)}</td><td>${esc(i.item)}</td><td>${resultChip(i.result)}</td><td><b>標準：</b>${esc(i.standard)}<br><b>備註：</b>${esc(i.note)}<br><b>異常：</b>${esc(i.abnormal)}<br><b>處理：</b>${esc(i.action)}${i.due?`<br><b>預計：</b>${esc(i.due)}`:''}</td><td><div class="photos">${i.photos.map(p=>`<a href="${esc(p)}" target="_blank"><img src="${esc(p)}"></a>`).join('')}</div></td></tr>`).join('')}</tbody></table>`; }
-function resultChip(r){ const cls=r==='正常'?'normal':r==='待注意'?'attn':r==='異常'?'bad':'na'; return `<span class="chip ${cls}">${esc(r)}</span>`; }
-function toggleDetails(i){ document.getElementById('details-'+i)?.classList.toggle('open'); }
-function formatTime(t){ if(!t) return ''; const d=new Date(t); return isNaN(d)?t:d.toLocaleString('zh-TW',{hour12:false}); }
-async function deleteRecord(idx){ const r=currentRecords[idx]; const id=recordIdOf(r); if(!id){ alert('這筆紀錄沒有 ID，無法刪除。'); return; } if(!confirm(`確定刪除這筆紀錄？\n${inspectorOf(r)}｜${formatTime(timeOf(r))}`)) return; try{ const res=await fetch(API_DELETE,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}); const data=await res.json().catch(()=>({})); if(!res.ok || data.ok===false) throw new Error(data.detail||data.error||'刪除失敗'); alert('已刪除紀錄'); await loadRecords(); }catch(e){ alert('刪除失敗：'+(e.message||e)); }}
-function exportCSV(){ const rows=[['巡檢人員','班別','天氣','送出時間','巡檢點','類別','項目','結果','標準','備註','異常說明','處理方式','照片']]; currentRecords.forEach(r=>{(r.__items||[]).forEach(i=>rows.push([inspectorOf(r),shiftOf(r),weatherOf(r),formatTime(timeOf(r)),i.location,i.category,i.item,i.result,i.standard,i.note,i.abnormal,i.action,i.photos.join(' ')]));}); const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='巡檢完整明細.csv'; a.click(); }
-function reportHTML(records,title='巡檢完整報告'){ return `<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Noto Sans TC',Arial,sans-serif;color:#111827}h1{font-size:26px}.rec{break-inside:avoid;margin:0 0 24px;padding:0 0 16px;border-bottom:2px solid #ddd}.meta{color:#555;margin:8px 0}.chip{display:inline-block;border-radius:999px;padding:4px 8px;margin-right:6px;font-weight:800}.normal{background:#dcfce7;color:#166534}.attn{background:#fef3c7;color:#92400e}.bad{background:#fee2e2;color:#991b1b}.na{background:#e2e8f0;color:#334155}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border:1px solid #ddd;padding:6px;vertical-align:top}th{background:#f3f4f6}.photos img{width:72px;height:72px;object-fit:cover;margin:2px}.sign{display:flex;gap:40px;margin-top:24px}.sign div{flex:1;border-top:1px solid #222;padding-top:8px}</style></head><body><h1>${title}</h1>${records.map((r)=>{const items=r.__items||[];return `<section class="rec"><h2>${esc(inspectorOf(r))}｜${esc(formatTime(timeOf(r)))}</h2><div class="meta">班別：${esc(shiftOf(r))}｜天氣：${esc(weatherOf(r))}｜總項目：${items.length}</div><div><span class="chip normal">正常 ${countBy(items,'正常')}</span><span class="chip attn">待注意 ${countBy(items,'待注意')}</span><span class="chip bad">異常 ${countBy(items,'異常')}</span><span class="chip na">N/A ${countBy(items,'N/A')}</span></div>${tableHTML(items)}<div class="sign"><div>巡檢人員簽名：</div><div>主管複核簽名：</div></div></section>`}).join('')}</body></html>`; }
-function printOne(idx){ const w=window.open('','_blank'); w.document.open(); w.document.write(reportHTML([currentRecords[idx]],'本筆巡檢完整報告')); w.document.close(); setTimeout(()=>w.print(),500); }
-function printFilteredReport(){ if(!currentRecords.length){alert('找不到紀錄');return;} const w=window.open('','_blank'); w.document.open(); w.document.write(reportHTML(currentRecords,'巡檢完整報告（全部）')); w.document.close(); setTimeout(()=>w.print(),500); }
-loadRecords();
+let records=[];
+let filtered=[];
+const $=id=>document.getElementById(id);
+function showMsg(t){$('msg').style.display=t?'block':'none';$('msg').textContent=t||''}
+function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
+function pick(o,keys,f=''){if(!o||typeof o!=='object')return f;for(const k of keys){const v=o[k];if(v!==undefined&&v!==null&&String(v).trim()!=='')return v}return f}
+function itemResult(it){return String(pick(it,['result','status','value','判定結果','判定','檢查結果','狀態'],'')).trim()}
+function normItem(it){return {...it,location:pick(it,['location','locationName','巡檢點','點位','區域'],''),category:pick(it,['category','類別'],''),item:pick(it,['item','itemName','點檢項目','項目','name'],''),standard:pick(it,['standard','標準','檢查標準','requirement'],''),result:itemResult(it),note:pick(it,['note','remark','remarks','備註','說明'],''),abnormalNote:pick(it,['abnormalNote','abnormalDescription','異常說明','異常內容'],''),action:pick(it,['action','process','handling','處理方式','改善方式','處理結果'],''),photos:(it.photos||it.photoUrls||it.photoURLs||it.images||it['照片']||[])}}
+function normalize(r){const items=(Array.isArray(r.items)?r.items:[]).map(normItem);const c=rx=>items.filter(i=>rx.test(i.result)).length;return {...r,items,inspector:pick(r,['inspector','inspectorName','staffName','userName','name','displayName','lineDisplayName','巡檢人員','填表人員','檢查人員'],'未填人員'),shift:pick(r,['shift','班別'],''),weather:pick(r,['weather','天氣'],''),submittedAt:pick(r,['submittedAt','createdAt','time','timestamp','送出時間','巡檢時間'],''),totalItems:Number(r.totalItems||r.total||items.length||0),normalCount:Number(r.normalCount??r.normal??c(/正常|OK|Normal/i)),attentionCount:Number(r.attentionCount??r.attention??c(/待注意|注意|Attention/i)),abnormalCount:Number(r.abnormalCount??r.abnormal??c(/異常|Abnormal|NG/i)),naCount:Number(r.naCount??r.na??c(/N\/A|NA|不適用/i)),id:r.id||r.recordId||r['紀錄ID']||'',blobUrl:r.blobUrl||'',blobPathname:r.blobPathname||''}}
+async function loadRecords(manual=false){try{showMsg(manual?'讀取中...':'');const res=await fetch('/api/getRecords',{cache:'no-store'});const text=await res.text();if(!res.ok)throw new Error(text);let data=JSON.parse(text);if(!Array.isArray(data)) data=data.records||data.data||data.items||[];records=data.map(normalize);showMsg('');render();}catch(e){showMsg('讀取失敗：'+(e.message||e));$('debug').style.display='block';$('debug').textContent=String(e.stack||e)}}
+function render(){const q=$('search').value.trim().toLowerCase();const f=$('filter').value;filtered=records.filter(r=>{const hay=JSON.stringify(r).toLowerCase();if(q&&!hay.includes(q))return false;if(f==='abnormal'&&r.abnormalCount<=0)return false;if(f==='attention'&&r.attentionCount<=0)return false;return true});$('sRecords').textContent=filtered.length;$('sItems').textContent=filtered.reduce((s,r)=>s+r.totalItems,0);$('sAbnormal').textContent=filtered.reduce((s,r)=>s+r.abnormalCount,0);$('sAttention').textContent=filtered.reduce((s,r)=>s+r.attentionCount,0);$('list').innerHTML=filtered.length?filtered.map(card).join(''):'<div class="card empty">沒有符合條件的紀錄</div>'}
+function card(r,i){const ab=r.items.filter(x=>/異常|待注意|注意/.test(x.result));return `<article class="card print-page" id="rec-${i}"><div class="record-title">${esc(r.inspector)}｜${esc(fmt(r.submittedAt))}</div><div class="muted">班別：${esc(r.shift)}｜天氣：${esc(r.weather)}｜總項目：${r.totalItems}</div><div class="badges"><span class="badge ok">正常 ${r.normalCount}</span><span class="badge att">待注意 ${r.attentionCount}</span><span class="badge bad">異常 ${r.abnormalCount}</span><span class="badge na">N/A ${r.naCount}</span></div><div class="actions no-print"><button class="b-green" onclick="printOne(${i})">本筆完整 PDF</button><button class="b-dark" onclick="toggleDetails(${i})">畫面展開完整明細</button><button class="b-red" onclick="deleteRecord(${i})">刪除紀錄</button></div><div class="summary"><b>異常 / 待注意摘要</b><br>${ab.length?ab.map(x=>`【${esc(x.location)}】${esc(x.item)}：${esc(x.result)} ${esc(x.abnormalNote||x.note||x.action)}`).join('<br>'):'本筆無異常或待注意。'}</div><div class="details" id="details-${i}">${r.items.map(itemHtml).join('')}</div></article>`}
+function itemHtml(x){let cls=/異常/.test(x.result)?'bad':/待注意|注意/.test(x.result)?'att':/N\/A|NA|不適用/.test(x.result)?'na':'ok';const photos=Array.isArray(x.photos)?x.photos:[];return `<div class="item"><b>${esc(x.location)}｜${esc(x.category)}｜${esc(x.item)}</b><div><span class="badge ${cls}">${esc(x.result||'未填')}</span></div><div class="muted">標準：${esc(x.standard)}</div>${x.note?`<div>備註：${esc(x.note)}</div>`:''}${x.abnormalNote?`<div>異常說明：${esc(x.abnormalNote)}</div>`:''}${x.action?`<div>處理方式：${esc(x.action)}</div>`:''}${photos.length?`<div class="photos">${photos.map(p=>`<img src="${esc(typeof p==='string'?p:(p.url||''))}" loading="lazy">`).join('')}</div>`:''}</div>`}
+function fmt(s){if(!s)return '';try{return new Date(s).toLocaleString('zh-TW',{hour12:false})}catch{return s}}
+function toggleDetails(i){$('details-'+i).classList.toggle('open')}
+function printOne(i){document.querySelectorAll('.card').forEach((el,idx)=>el.style.display=idx===i?'block':'none');document.querySelectorAll('.details').forEach(el=>el.classList.add('open'));window.print();document.querySelectorAll('.card').forEach(el=>el.style.display='');render()}
+function printAll(){if(!filtered.length){alert('找不到紀錄');return}document.querySelectorAll('.details').forEach(el=>el.classList.add('open'));window.print()}
+function exportCSV(){const rows=[['巡檢人員','送出時間','班別','天氣','巡檢點','類別','項目','結果','標準','備註','異常說明','處理方式','照片']];filtered.forEach(r=>r.items.forEach(it=>rows.push([r.inspector,fmt(r.submittedAt),r.shift,r.weather,it.location,it.category,it.item,it.result,it.standard,it.note,it.abnormalNote,it.action,(it.photos||[]).map(p=>typeof p==='string'?p:(p.url||'')).join(' | ')])));const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='巡檢紀錄.csv';a.click()}
+async function deleteRecord(i){const r=filtered[i];if(!r)return;if(!confirm(`確定刪除這筆紀錄？\n${r.inspector}｜${fmt(r.submittedAt)}\n刪除後雲端紀錄會移除，無法復原。`))return;try{showMsg('刪除中...');const res=await fetch('/api/deleteRecord',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:r.id,blobUrl:r.blobUrl,blobPathname:r.blobPathname})});const txt=await res.text();if(!res.ok)throw new Error(txt);showMsg('已刪除，重新讀取中...');await loadRecords(false)}catch(e){showMsg('刪除失敗：'+(e.message||e));}}
+loadRecords(false);
 </script>
-</body></html>
+</body>
+</html>
