@@ -1,274 +1,642 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-
+<html lang="zh-Hant">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f3a5f">
 <title>社區巡檢系統</title>
 
 <style>
+:root{
+  --navy:#1f3a5f;
+  --blue:#2f80ed;
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#1f2937;
+  --muted:#6b7280;
+  --green:#16a34a;
+  --yellow:#d97706;
+  --red:#dc2626;
+  --line:#e5e7eb;
+}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
-    font-family: Arial, sans-serif;
-    background:#f5f5f5;
-    margin:0;
-    padding:15px;
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC",sans-serif;
+  background:var(--bg);
+  color:var(--text);
 }
 
-h2{
-    text-align:center;
-    margin-bottom:20px;
+header{
+  position:sticky;
+  top:0;
+  z-index:9;
+  background:linear-gradient(135deg,#1f3a5f,#2f80ed);
+  color:#fff;
+  padding:16px 16px 14px;
+  border-bottom-left-radius:18px;
+  border-bottom-right-radius:18px;
+  box-shadow:0 8px 24px rgba(31,58,95,.22);
 }
 
-.card{
-    background:white;
-    padding:15px;
-    margin-bottom:15px;
-    border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+h1{
+  font-size:20px;
+  margin:0 0 8px;
 }
 
-h3{
-    margin-top:0;
+.sub{
+  font-size:13px;
+  opacity:.9;
 }
 
-button{
-    border:none;
-    padding:10px 14px;
-    margin:5px 5px 10px 0;
-    border-radius:8px;
-    color:white;
-    font-size:14px;
+.wrap{
+  padding:14px 12px 92px;
 }
 
-.ok{
-    background:#4CAF50;
+.panel,.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  box-shadow:0 6px 18px rgba(31,41,55,.06);
 }
 
-.warn{
-    background:#FFC107;
-    color:black;
+.panel{
+  padding:14px;
+  margin-bottom:12px;
 }
 
-.bad{
-    background:#F44336;
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
 }
 
-input, textarea{
-    width:100%;
-    padding:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    margin-top:8px;
-    box-sizing:border-box;
-    font-size:14px;
+.field{
+  margin-bottom:10px;
+}
+
+label{
+  display:block;
+  font-size:13px;
+  font-weight:700;
+  margin-bottom:6px;
+}
+
+input,select,textarea{
+  width:100%;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  padding:11px;
+  font-size:16px;
+  background:#fff;
 }
 
 textarea{
-    min-height:80px;
+  min-height:78px;
+  resize:vertical;
 }
 
-.submitBtn{
-    width:100%;
-    background:#2196F3;
-    font-size:18px;
-    padding:15px;
+.progress{
+  height:10px;
+  background:#e5e7eb;
+  border-radius:999px;
+  overflow:hidden;
 }
 
+.bar{
+  height:100%;
+  background:#22c55e;
+  width:0;
+  transition:.25s;
+}
+
+.progressText{
+  margin-top:7px;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.card{
+  padding:14px;
+  margin:12px 0;
+}
+
+.locHead{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+}
+
+.locTitle{
+  font-size:17px;
+  font-weight:800;
+}
+
+.badge{
+  font-size:12px;
+  border-radius:999px;
+  padding:5px 8px;
+  background:#eef2ff;
+  color:#1f3a5f;
+}
+
+.statusGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:8px;
+  margin:12px 0;
+}
+
+.statusBtn{
+  border:1px solid #d1d5db;
+  border-radius:14px;
+  background:#fff;
+  padding:13px 6px;
+  font-size:15px;
+  font-weight:800;
+}
+
+.statusBtn.active.ok{
+  background:#dcfce7;
+  border-color:#16a34a;
+  color:#166534;
+}
+
+.statusBtn.active.warn{
+  background:#fef3c7;
+  border-color:#d97706;
+  color:#92400e;
+}
+
+.statusBtn.active.bad{
+  background:#fee2e2;
+  border-color:#dc2626;
+  color:#991b1b;
+}
+
+.detail{
+  display:none;
+  border-top:1px dashed #d1d5db;
+  margin-top:12px;
+  padding-top:12px;
+}
+
+.detail.show{
+  display:block;
+}
+
+.footer{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(255,255,255,.96);
+  backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);
+  padding:10px 12px env(safe-area-inset-bottom);
+  display:grid;
+  grid-template-columns:1fr 1fr 1.4fr;
+  gap:8px;
+}
+
+.btn{
+  border:0;
+  border-radius:14px;
+  padding:13px 10px;
+  font-size:15px;
+  font-weight:900;
+}
+
+.btn.secondary{
+  background:#e5e7eb;
+  color:#111827;
+}
+
+.btn.print{
+  background:#334155;
+  color:#fff;
+}
+
+.btn.primary{
+  background:var(--navy);
+  color:#fff;
+}
+
+.hint{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.toast{
+  position:fixed;
+  left:16px;
+  right:16px;
+  bottom:92px;
+  background:#111827;
+  color:#fff;
+  padding:12px 14px;
+  border-radius:14px;
+  display:none;
+  z-index:99;
+}
+
+.toast.show{
+  display:block;
+}
+
+.small{
+  font-size:12px;
+  color:var(--muted);
+}
+
+.reportOnly{
+  display:none;
+}
+
+@media(min-width:760px){
+  .wrap{
+    max-width:760px;
+    margin:auto;
+  }
+
+  .footer{
+    max-width:760px;
+    margin:auto;
+    left:0;
+    right:0;
+  }
+}
+
+@media(max-width:420px){
+  .row{
+    grid-template-columns:1fr;
+  }
+
+  .footer{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .footer .primary{
+    grid-column:1 / -1;
+  }
+}
+
+@media print{
+  header,
+  .footer,
+  .toast,
+  .noPrint{
+    display:none !important;
+  }
+
+  body{
+    background:#fff;
+  }
+
+  .wrap{
+    padding:0;
+    max-width:none;
+  }
+
+  .panel,
+  .card{
+    box-shadow:none;
+    border:1px solid #ccc;
+    break-inside:avoid;
+  }
+
+  .detail{
+    display:block !important;
+  }
+
+  input,
+  textarea,
+  select{
+    border:none;
+    background:#fff;
+  }
+}
 </style>
-
 </head>
 
 <body>
 
-<h2>📋 社區巡檢系統</h2>
+<header>
+  <h1>社區巡檢系統</h1>
+  <div class="sub">主管版｜免登入｜手機互動式巡檢｜可拍照、上傳、列印/轉 PDF</div>
+</header>
 
-<div class="card">
+<div class="wrap">
 
-<label>巡檢人員</label>
-<input type="text" id="name" placeholder="請輸入巡檢人員">
+  <section class="panel">
+    <div class="row">
+      <div class="field">
+        <label>巡檢人員</label>
+        <input id="inspector" placeholder="請輸入姓名">
+      </div>
 
-<br><br>
+      <div class="field">
+        <label>巡檢時段</label>
+        <select id="shift">
+          <option value="">請選擇</option>
+          <option>早班</option>
+          <option>中班</option>
+          <option>晚班</option>
+          <option>夜班</option>
+        </select>
+      </div>
+    </div>
 
-<label>巡檢日期</label>
-<input type="date" id="date">
+    <div class="field">
+      <label>區域 / 社區名稱（選填）</label>
+      <input id="area" placeholder="例：A社區 / B棟">
+    </div>
+
+    <div class="progress">
+      <div class="bar" id="bar"></div>
+    </div>
+
+    <div class="progressText" id="progressText">已完成 0 / 16</div>
+
+    <div class="hint">
+      每個巡檢點至少點選一次狀況。選「注意」或「異常」會自動展開異常類型、嚴重程度、說明、期限與照片。
+    </div>
+  </section>
+
+  <div id="cards"></div>
 
 </div>
 
-<div id="app"></div>
-
-<div class="card">
-
-<button class="submitBtn" onclick="submitData()">
-📤 送出巡檢
-</button>
-
+<div class="footer">
+  <button class="btn secondary" onclick="resetAll()">清除重填</button>
+  <button class="btn print" onclick="printReport()">列印/轉PDF</button>
+  <button class="btn primary" onclick="submitAll()">送出巡檢</button>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <script>
+let LOCATIONS = [];
+let TYPES = [];
+let SEVERITIES = [];
+let state = {};
 
-const locations = [
-"B1庫房",
-"B2庫房",
-"B3庫房",
-"B4庫房",
-"A棟一樓安全梯",
-"泳池",
-"2樓家教室",
-"2樓桌球室",
-"2樓健身房",
-"2樓休息室",
-"14樓中繼水塔",
-"26樓廚房",
-"頂樓水池",
-"B棟一樓安全梯",
-"B棟頂樓",
-"後哨"
-];
+function init(){
+  google.script.run
+    .withSuccessHandler(function(cfg){
+      LOCATIONS = cfg.locations;
+      TYPES = cfg.types;
+      SEVERITIES = cfg.severities;
+      renderCards();
+      updateProgress();
+    })
+    .withFailureHandler(function(err){
+      toast("載入失敗：" + err.message);
+    })
+    .getAppConfig();
+}
 
-const app = document.getElementById("app");
+function renderCards(){
+  const cards = document.getElementById("cards");
+  cards.innerHTML = "";
 
-locations.forEach((loc, i) => {
+  LOCATIONS.forEach(function(loc, i){
+    state[loc] = {
+      status:"",
+      type:"",
+      severity:"",
+      note:"",
+      deadline:"",
+      photo:null
+    };
 
-    const div = document.createElement("div");
+    const el = document.createElement("section");
+    el.className = "card";
 
-    div.className = "card";
+    el.innerHTML = `
+      <div class="locHead">
+        <div class="locTitle">${i + 1}. ${loc}</div>
+        <div class="badge" id="badge_${i}">未填</div>
+      </div>
 
-    div.innerHTML = `
-    
-        <h3>${loc}</h3>
+      <div class="statusGrid">
+        <button class="statusBtn ok" onclick="setStatus('${loc}', ${i}, '正常', this)">正常</button>
+        <button class="statusBtn warn" onclick="setStatus('${loc}', ${i}, '注意', this)">注意</button>
+        <button class="statusBtn bad" onclick="setStatus('${loc}', ${i}, '異常', this)">異常</button>
+      </div>
 
-        <button class="ok" onclick="setStatus(${i}, '正常')">
-        正常
-        </button>
+      <div class="detail" id="detail_${i}">
+        <div class="row">
+          <div class="field">
+            <label>異常類型</label>
+            <select onchange="state['${loc}'].type=this.value">
+              <option value="">請選擇</option>
+              ${TYPES.map(x => `<option>${x}</option>`).join("")}
+            </select>
+          </div>
 
-        <button class="warn" onclick="setStatus(${i}, '注意')">
-        注意
-        </button>
+          <div class="field">
+            <label>嚴重程度</label>
+            <select onchange="state['${loc}'].severity=this.value">
+              <option value="">請選擇</option>
+              ${SEVERITIES.map(x => `<option>${x}</option>`).join("")}
+            </select>
+          </div>
+        </div>
 
-        <button class="bad" onclick="setStatus(${i}, '異常')">
-        異常
-        </button>
+        <div class="field">
+          <label>異常 / 注意說明</label>
+          <textarea placeholder="請描述現況、位置、影響範圍、是否已初步處置" oninput="state['${loc}'].note=this.value"></textarea>
+        </div>
 
-        <input 
-            type="text"
-            id="status${i}"
-            placeholder="目前狀況"
-            readonly
-        >
+        <div class="row">
+          <div class="field">
+            <label>改善期限</label>
+            <input type="date" onchange="state['${loc}'].deadline=this.value">
+          </div>
 
-        <textarea
-            id="note${i}"
-            placeholder="異常說明..."
-        ></textarea>
+          <div class="field">
+            <label>照片</label>
+            <input type="file" accept="image/*" capture="environment" onchange="handlePhoto('${loc}', this)">
+          </div>
+        </div>
 
+        <div class="small">
+          照片會上傳到 Google Drive「社區巡檢照片」資料夾，並在試算表留下連結。
+        </div>
+      </div>
     `;
 
-    app.appendChild(div);
-
-});
-
-function setStatus(i, status){
-
-    document.getElementById("status"+i).value = status;
-
+    cards.appendChild(el);
+  });
 }
 
-function resetForm(){
+function setStatus(loc, i, status, btn){
+  state[loc].status = status;
 
-    document.getElementById("name").value = "";
+  btn.parentElement.querySelectorAll(".statusBtn").forEach(function(b){
+    b.classList.remove("active");
+  });
 
-    document.getElementById("date").value = "";
+  btn.classList.add("active");
 
-    locations.forEach((loc, i)=>{
+  document.getElementById("badge_" + i).textContent = status;
 
-        document.getElementById("status"+i).value = "";
+  const detail = document.getElementById("detail_" + i);
 
-        document.getElementById("note"+i).value = "";
+  if(status === "正常"){
+    detail.classList.remove("show");
+  }else{
+    detail.classList.add("show");
+  }
 
-    });
-
-    window.scrollTo({
-        top:0,
-        behavior:"smooth"
-    });
-
+  updateProgress();
 }
 
-function submitData(){
+function handlePhoto(loc, input){
+  const file = input.files && input.files[0];
 
-    const name = document.getElementById("name").value;
+  if(!file){
+    state[loc].photo = null;
+    return;
+  }
 
-    const date = document.getElementById("date").value;
+  const reader = new FileReader();
 
-    let data = [];
+  reader.onload = function(e){
+    state[loc].photo = {
+      name:file.name,
+      type:file.type,
+      data:e.target.result
+    };
 
-    locations.forEach((loc, i)=>{
+    toast("照片已暫存，送出後會上傳");
+  };
 
-        const status = document.getElementById("status"+i).value;
+  reader.readAsDataURL(file);
+}
 
-        const note = document.getElementById("note"+i).value;
+function updateProgress(){
+  const done = LOCATIONS.filter(function(l){
+    return state[l] && state[l].status;
+  }).length;
 
-        if(status){
+  const percent = LOCATIONS.length ? (done / LOCATIONS.length * 100) : 0;
 
-            data.push({
-                location:loc,
-                status:status,
-                note:note
-            });
+  document.getElementById("bar").style.width = percent + "%";
+  document.getElementById("progressText").textContent = `已完成 ${done} / ${LOCATIONS.length}`;
+}
 
-        }
+function submitAll(){
+  const inspector = document.getElementById("inspector").value.trim();
+  const shift = document.getElementById("shift").value;
+  const area = document.getElementById("area").value.trim();
 
-    });
+  if(!inspector){
+    toast("請輸入巡檢人員");
+    return;
+  }
 
-    if(!name){
+  if(!shift){
+    toast("請選擇巡檢時段");
+    return;
+  }
 
-        alert("請填寫巡檢人員");
+  const missing = LOCATIONS.filter(function(l){
+    return !state[l].status;
+  });
 
-        return;
+  if(missing.length){
+    toast("尚有未填巡檢點：" + missing.slice(0,3).join("、") + (missing.length > 3 ? "..." : ""));
+    return;
+  }
 
-    }
+  const badMissing = LOCATIONS.filter(function(l){
+    return (state[l].status === "異常" || state[l].status === "注意") && !state[l].note.trim();
+  });
 
-    if(!date){
+  if(badMissing.length){
+    toast("注意 / 異常需填說明：" + badMissing[0]);
+    return;
+  }
 
-        alert("請選擇日期");
-
-        return;
-
-    }
-
-    if(data.length === 0){
-
-        alert("請至少填寫一筆巡檢");
-
-        return;
-
-    }
-
-    google.script.run
-
-    .withSuccessHandler(function(){
-
-        alert("✅ 巡檢資料已送出！");
-
-        resetForm();
-
+  const payload = {
+    inspector:inspector,
+    shift:shift,
+    area:area,
+    records:LOCATIONS.map(function(l){
+      return {
+        location:l,
+        status:state[l].status,
+        type:state[l].type,
+        severity:state[l].severity,
+        note:state[l].note,
+        deadline:state[l].deadline,
+        photo:state[l].photo
+      };
     })
+  };
 
-    .withFailureHandler(function(error){
+  toast("送出中，請勿關閉畫面");
 
-        alert("❌ 送出失敗：" + error.message);
-
+  google.script.run
+    .withSuccessHandler(function(res){
+      toast("送出成功：" + res.count + " 筆紀錄，畫面已重置");
+      setTimeout(function(){
+        resetAll();
+      }, 900);
     })
-
-    .saveData(name, date, data);
-
+    .withFailureHandler(function(err){
+      toast("送出失敗：" + err.message);
+    })
+    .submitInspection(payload);
 }
 
+function resetAll(){
+  document.getElementById("inspector").value = "";
+  document.getElementById("shift").value = "";
+  document.getElementById("area").value = "";
+
+  state = {};
+
+  renderCards();
+  updateProgress();
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+}
+
+function printReport(){
+  const inspector = document.getElementById("inspector").value.trim();
+  const shift = document.getElementById("shift").value;
+
+  if(!inspector || !shift){
+    toast("列印前建議先填寫巡檢人員與時段");
+  }
+
+  window.print();
+}
+
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+
+  setTimeout(function(){
+    t.classList.remove("show");
+  }, 3500);
+}
+
+init();
 </script>
-</body>
 
+</body>
 </html>
